@@ -5969,6 +5969,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
                 Return (TEMP) /* \_SB_.RDGI.TEMP */
             }
+            Return (Zero) // fix warning
         }
 
         Method (RDGP, 1, NotSerialized)
@@ -5986,6 +5987,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
                 Return (TEMP) /* \_SB_.RDGP.TEMP */
             }
+            Return (Zero) // fix warning
         }
 
         Method (WTGP, 2, NotSerialized)
@@ -9402,7 +9404,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
             MNIO (Arg0)
             MNIO ("\n")
             Return (MDBG) /* External reference */
-            Arg0
+            //Arg0
         }
 
         Return (Zero)
@@ -13601,6 +13603,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                 {
                     Return (One)
                 }
+                Return (Zero) // fix warning
             }
 
             Method (_STA, 0, NotSerialized)  // _STA: Status
@@ -17412,7 +17415,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
             Release (MUEC)
             Return (Local1)
-            Return (Ones)
+            //Return (Ones)
         }
 
         Method (WBAT, 3, Serialized)
@@ -17443,7 +17446,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
             Release (MUEC)
             Return (Local1)
-            Return (Ones)
+            //Return (Ones)
         }
 
         Method (FNCT, 2, Serialized)
@@ -17784,6 +17787,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                 Release (MU4T)
                 Return (Local0)
             }
+            Return (Zero) // fix warning
         }
 
         Method (ECSB, 7, NotSerialized)
@@ -19138,6 +19142,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
             }
 
             FHKS ()
+            Return (Zero) // fix warning
         }
 
         Method (_Q12, 0, NotSerialized)  // _Qxx: EC Query
@@ -19173,6 +19178,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
             {
                 ^^^^ATKD.IANE (0x32)
             }
+            Return (Zero) // fix warning
         }
 
         Method (_Q14, 0, NotSerialized)  // _Qxx: EC Query
@@ -19195,6 +19201,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
             {
                 ^^^^ATKD.IANE (0x31)
             }
+            Return (Zero) // fix warning
         }
 
         Method (_Q15, 0, NotSerialized)  // _Qxx: EC Query
@@ -19217,6 +19224,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
             {
                 ^^^^ATKD.IANE (0x30)
             }
+            Return (Zero) // fix warning
         }
 
         Method (_Q6F, 0, NotSerialized)  // _Qxx: EC Query
