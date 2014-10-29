@@ -38,19 +38,19 @@ DefinitionBlock ("SSDT-0.aml", "SSDT", 1, "Intel", "zpodd", 0x00001000)
                 Name (_ADR, 0x0002FFFF)  // _ADR: Address
                 Method (_DSM, 4, Serialized)  // _DSM: Device-Specific Method
                 {
-                    Name (_T_1, Zero)  // _T_x: Emitted by ASL Compiler
-                    Name (_T_0, Zero)  // _T_x: Emitted by ASL Compiler
+                    Name (T_1, Zero)  // _T_x: Emitted by ASL Compiler
+                    Name (T_0, Zero)  // _T_x: Emitted by ASL Compiler
                     If (LEqual (Arg0, ToUUID ("bdfaef30-aebb-11de-8a39-0800200c9a66")))
                     {
                         While (One)
                         {
-                            Store (ToInteger (Arg2), _T_0) /* \_SB_.PCI0.SAT0.PRT2._DSM._T_0 */
-                            If (LEqual (_T_0, Zero))
+                            Store (ToInteger (Arg2), T_0) /* \_SB_.PCI0.SAT0.PRT2._DSM.T_0 */
+                            If (LEqual (T_0, Zero))
                             {
                                 While (One)
                                 {
-                                    Store (ToInteger (Arg1), _T_1) /* \_SB_.PCI0.SAT0.PRT2._DSM._T_1 */
-                                    If (LEqual (_T_1, One))
+                                    Store (ToInteger (Arg1), T_1) /* \_SB_.PCI0.SAT0.PRT2._DSM.T_1 */
+                                    If (LEqual (T_1, One))
                                     {
                                         If (LEqual (PFLV, FDTP))
                                         {
@@ -78,13 +78,13 @@ DefinitionBlock ("SSDT-0.aml", "SSDT", 1, "Intel", "zpodd", 0x00001000)
                             }
                             Else
                             {
-                                If (LEqual (_T_0, One))
+                                If (LEqual (T_0, One))
                                 {
                                     Return (One)
                                 }
                                 Else
                                 {
-                                    If (LEqual (_T_0, 0x02))
+                                    If (LEqual (T_0, 0x02))
                                     {
                                         Store (Zero, GPE3) /* \GPE3 */
                                         If (LEqual (And (\GL00, 0x08), 0x08))
@@ -104,7 +104,7 @@ DefinitionBlock ("SSDT-0.aml", "SSDT", 1, "Intel", "zpodd", 0x00001000)
                                     }
                                     Else
                                     {
-                                        If (LEqual (_T_0, 0x03))
+                                        If (LEqual (T_0, 0x03))
                                         {
                                             Store (Zero, GPE3) /* \GPE3 */
                                             Store (One, GPS3) /* \GPS3 */
