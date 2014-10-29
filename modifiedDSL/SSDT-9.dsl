@@ -26,7 +26,7 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
     External (_PR_.CPU0._TSS, IntObj)
     External (_SB_.PCI0, DeviceObj)
     External (_SB_.PCI0.GFX0, DeviceObj)
-    External (_SB_.PCI0.GFX0._DSM, IntObj)
+    External (_SB_.PCI0.GFX0._DSM, MethodObj)
     External (_SB_.PCI0.GFX0.LCDD, UnknownObj)
     External (_SB_.PCI0.LPCB.EC0_.ECNV, MethodObj)    // 1 Arguments
     External (_SB_.PCI0.LPCB.EC0_.FBST, IntObj)
@@ -445,83 +445,83 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
 
         Method (CTOI, 1, Serialized)
         {
-            Name (_T_0, Zero)  // _T_x: Emitted by ASL Compiler
+            Name (T_0, Zero)  // _T_x: Emitted by ASL Compiler
             While (One)
             {
-                Store (ToInteger (Arg0), _T_0) /* \_SB_.PCI0.GFX0.CTOI._T_0 */
-                If (LEqual (_T_0, One))
+                Store (ToInteger (Arg0), T_0) /* \_SB_.PCI0.GFX0.CTOI.T_0 */
+                If (LEqual (T_0, One))
                 {
                     Return (One)
                 }
                 Else
                 {
-                    If (LEqual (_T_0, 0x02))
+                    If (LEqual (T_0, 0x02))
                     {
                         Return (0x02)
                     }
                     Else
                     {
-                        If (LEqual (_T_0, 0x04))
+                        If (LEqual (T_0, 0x04))
                         {
                             Return (0x03)
                         }
                         Else
                         {
-                            If (LEqual (_T_0, 0x08))
+                            If (LEqual (T_0, 0x08))
                             {
                                 Return (0x04)
                             }
                             Else
                             {
-                                If (LEqual (_T_0, 0x10))
+                                If (LEqual (T_0, 0x10))
                                 {
                                     Return (0x05)
                                 }
                                 Else
                                 {
-                                    If (LEqual (_T_0, 0x20))
+                                    If (LEqual (T_0, 0x20))
                                     {
                                         Return (0x06)
                                     }
                                     Else
                                     {
-                                        If (LEqual (_T_0, 0x40))
+                                        If (LEqual (T_0, 0x40))
                                         {
                                             Return (0x07)
                                         }
                                         Else
                                         {
-                                            If (LEqual (_T_0, 0x03))
+                                            If (LEqual (T_0, 0x03))
                                             {
                                                 Return (0x08)
                                             }
                                             Else
                                             {
-                                                If (LEqual (_T_0, 0x06))
+                                                If (LEqual (T_0, 0x06))
                                                 {
                                                     Return (0x09)
                                                 }
                                                 Else
                                                 {
-                                                    If (LEqual (_T_0, 0x0A))
+                                                    If (LEqual (T_0, 0x0A))
                                                     {
                                                         Return (0x0A)
                                                     }
                                                     Else
                                                     {
-                                                        If (LEqual (_T_0, 0x12))
+                                                        If (LEqual (T_0, 0x12))
                                                         {
                                                             Return (0x0B)
                                                         }
                                                         Else
                                                         {
-                                                            If (LEqual (_T_0, 0x22))
+                                                            If (LEqual (T_0, 0x22))
                                                             {
                                                                 Return (0x0C)
                                                             }
                                                             Else
                                                             {
-                                                                If (LEqual (_T_0, 0x42))
+                                                                If (LEqual (T_0, 0x42))
                                                                 {
                                                                     Return (0x0D)
                                                                 }
@@ -941,8 +941,8 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
         Name (PSCP, Zero)
         Method (GPS, 4, Serialized)
         {
-            Name (_T_1, Zero)  // _T_x: Emitted by ASL Compiler
-            Name (_T_0, Zero)  // _T_x: Emitted by ASL Compiler
+            Name (T_1, Zero)  // _T_x: Emitted by ASL Compiler
+            Name (T_0, Zero)  // _T_x: Emitted by ASL Compiler
             Store ("------- GPS DSM --------", Debug)
             If (LNotEqual (Arg1, 0x0100))
             {
@@ -951,8 +951,8 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
 
             While (One)
             {
-                Store (ToInteger (Arg2), _T_0) /* \_SB_.PCI0.PEG0.PEGP.GPS_._T_0 */
-                If (LEqual (_T_0, Zero))
+                Store (ToInteger (Arg2), T_0) /* \_SB_.PCI0.PEG0.PEGP.GPS_.T_0 */
+                If (LEqual (T_0, Zero))
                 {
                     Name (FMSK, Buffer (0x08)
                     {
@@ -1003,14 +1003,14 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
                 }
                 Else
                 {
-                    If (LEqual (_T_0, 0x13))
+                    If (LEqual (T_0, 0x13))
                     {
                         Store ("GPS fun 19", Debug)
                         Return (Arg3)
                     }
                     Else
                     {
-                        If (LEqual (_T_0, 0x20))
+                        If (LEqual (T_0, 0x20))
                         {
                             Store ("GPS fun 20", Debug)
                             Name (RET1, Zero)
@@ -1039,13 +1039,13 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
                         }
                         Else
                         {
-                            If (LEqual (_T_0, 0x21))
+                            If (LEqual (T_0, 0x21))
                             {
                                 Return (\_PR.CPU0._PSS) /* External reference */
                             }
                             Else
                             {
-                                If (LEqual (_T_0, 0x22))
+                                If (LEqual (T_0, 0x22))
                                 {
                                     CreateByteField (Arg3, Zero, PCAP)
                                     Store (PCAP, \_PR.CPU0._PPC) /* External reference */
@@ -1055,20 +1055,20 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
                                 }
                                 Else
                                 {
-                                    If (LEqual (_T_0, 0x23))
+                                    If (LEqual (T_0, 0x23))
                                     {
                                         Return (PSAP) /* \_SB_.PCI0.PEG0.PEGP.PSAP */
                                     }
                                     Else
                                     {
-                                        If (LEqual (_T_0, 0x25))
+                                        If (LEqual (T_0, 0x25))
                                         {
                                             Store ("GPS fun 25", Debug)
                                             Return (\_PR.CPU0._TSS) /* External reference */
                                         }
                                         Else
                                         {
-                                            If (LEqual (_T_0, 0x26))
+                                            If (LEqual (T_0, 0x26))
                                             {
                                                 Store ("GPS fun 26", Debug)
                                                 CreateDWordField (Arg3, Zero, TCAP)
@@ -1078,7 +1078,7 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
                                             }
                                             Else
                                             {
-                                                If (LEqual (_T_0, 0x2A))
+                                                If (LEqual (T_0, 0x2A))
                                                 {
                                                     Store ("GPS fun 2a", Debug)
                                                     CreateByteField (Arg3, Zero, PSH0)
@@ -1092,8 +1092,8 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
                                                     CreateBitField (Arg3, 0x0E, SEN2)
                                                     While (One)
                                                     {
-                                                        Store (PSH0, _T_1) /* \_SB_.PCI0.PEG0.PEGP.GPS_._T_1 */
-                                                        If (LEqual (_T_1, Zero))
+                                                        Store (PSH0, T_1) /* \_SB_.PCI0.PEG0.PEGP.GPS_.T_1 */
+                                                        If (LEqual (T_1, Zero))
                                                         {
                                                             If (CPUT)
                                                             {
@@ -1106,7 +1106,7 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
                                                         }
                                                         Else
                                                         {
-                                                            If (LEqual (_T_1, One))
+                                                            If (LEqual (T_1, One))
                                                             {
                                                                 Store (0x0300, RETN) /* \_SB_.PCI0.PEG0.PEGP.RETN */
                                                                 Or (RETN, PSH0, RETN) /* \_SB_.PCI0.PEG0.PEGP.RETN */
@@ -1115,7 +1115,7 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
                                                             }
                                                             Else
                                                             {
-                                                                If (LEqual (_T_1, 0x02))
+                                                                If (LEqual (T_1, 0x02))
                                                                 {
                                                                     Store (0x0102, RETN) /* \_SB_.PCI0.PEG0.PEGP.RETN */
                                                                     Store (Zero, VRV1) /* \_SB_.PCI0.PEG0.PEGP.VRV1 */
@@ -1263,7 +1263,7 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
 
         Method (NGC6, 4, Serialized)
         {
-            Name (_T_0, Zero)  // _T_x: Emitted by ASL Compiler
+            Name (T_0, Zero)  // _T_x: Emitted by ASL Compiler
             Store ("------- GC6 DSM --------", Debug)
             If (LLess (Arg1, 0x0100))
             {
@@ -1272,8 +1272,8 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
 
             While (One)
             {
-                Store (ToInteger (Arg2), _T_0) /* \_SB_.PCI0.PEG0.PEGP.NGC6._T_0 */
-                If (LEqual (_T_0, Zero))
+                Store (ToInteger (Arg2), T_0) /* \_SB_.PCI0.PEG0.PEGP.NGC6.T_0 */
+                If (LEqual (T_0, Zero))
                 {
                     Return (Buffer (0x04)
                     {
@@ -1282,7 +1282,7 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
                 }
                 Else
                 {
-                    If (LEqual (_T_0, One))
+                    If (LEqual (T_0, One))
                     {
                         Name (JTB1, Buffer (0x04)
                         {
@@ -1305,14 +1305,14 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
                     }
                     Else
                     {
-                        If (LEqual (_T_0, 0x02))
+                        If (LEqual (T_0, 0x02))
                         {
                             Store ("GPS fun 19", Debug)
                             Return (Arg3)
                         }
                         Else
                         {
-                            If (LEqual (_T_0, 0x03))
+                            If (LEqual (T_0, 0x03))
                             {
                                 CreateField (Arg3, Zero, 0x03, GUPC)
                                 CreateField (Arg3, 0x04, One, PLPC)
@@ -1389,7 +1389,7 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
                             }
                             Else
                             {
-                                If (LEqual (_T_0, 0x04))
+                                If (LEqual (T_0, 0x04))
                                 {
                                     Return (0x80000002)
                                 }
@@ -1448,11 +1448,11 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
                         CreateField (Arg2, 0xE0, 0x20, XRG0)
                         If (CondRefOf (\_SB.PCI0.GFX0._DSM))
                         {
-                            Return (\_SB.PCI0.GFX0._DSM) /* External reference */
-                            MUID
-                            REVI
-                            SFNC
-                            XRG0
+                            Return (\_SB.PCI0.GFX0._DSM(MUID,REVI,SFNC,XRG0)) /* External reference */
+                            //MUID
+                            //REVI
+                            //SFNC
+                            //XRG0
                         }
                     }
                 }
