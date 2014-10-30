@@ -5451,14 +5451,49 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                 Device (PXSX)
                 {
                     Name (_ADR, Zero)  // _ADR: Address
-                    Method (_PRW, 0, NotSerialized)  // _PRW: Power Resources for Wake
-                    {
-                        Return (GPRW (0x09, 0x04))
-                    }
+                    
+                    /*
+                     * Method (_PRW, 0, NotSerialized)  // _PRW: Power Resources for Wake
+                     * {
+                     *     Return (GPRW (0x09, 0x04))
+                     * }
+                     * Method (_RMV, 0, NotSerialized)  // _RMV: Removal Status
+                     * {
+                     *    Return (HPCE) // \_SB_.PCI0.RP03.HPCE
+                     * }
+                     */
+                    Name (_SUN, One)
+                    Name (_PRW, Package (0x02) {0x09,0x04})
 
-                    Method (_RMV, 0, NotSerialized)  // _RMV: Removal Status
+                    Method (_DSM, 4, NotSerialized)
                     {
-                        Return (HPCE) /* \_SB_.PCI0.RP03.HPCE */
+                        If (LEqual (Arg2, Zero))
+                        {
+                            Return (Buffer (One)
+                                    {
+                                        0x03
+                                    })
+                            }
+
+                            Return (Package (0x0C)
+                            {
+                            "AAPL,slot-name", 
+                            "AirPort", 
+                            "built-in", 
+                            Buffer (One)
+                            {
+                                0x00
+                            }, 
+
+                            "device_type", 
+                            "AirPort", 
+                            "model", 
+                            "Broadcom BCM9432x 802.11 a/b/g/n Wireless Network Controller", 
+                            "name", 
+                            "AirPort Extreme", 
+                            "compatible", 
+                            "pci14e4,43a0"
+                        })
                     }
                 }
 
