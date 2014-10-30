@@ -71,6 +71,8 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
      * because the disassembler had to guess at the number of arguments
      * required for each:
      */
+    External(_SB_.PCI0.PEG0.PEGP._DSM, MethodObj)    // Fix: Object does not exit
+    External(_SB_.PCI0.PEG0.PEGP._PS3, MethodObj)    // Fix: Object does not exit
     External (_SB_.PCI0.PAUD.PUAM, MethodObj)    // Warning: Unresolved method, guessing 0 arguments
     External (_SB_.PCI0.XHC_.DUAM, MethodObj)    // Warning: Unresolved method, guessing 0 arguments
     External (_SB_.TPM_.PTS_, MethodObj)    // Warning: Unresolved method, guessing 1 arguments
@@ -107,9 +109,9 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
     External (_SB_.PCI0.GFX0.SWHD, MethodObj)    // 1 Arguments
     External (_SB_.PCI0.GFX0.TCHE, FieldUnitObj)
     External (_SB_.PCI0.GFX0.UPBL, MethodObj)    // 0 Arguments
-    External (_SB_.PCI0.PEG0, UnknownObj)
+    //External (_SB_.PCI0.PEG0, UnknownObj)
     External (_SB_.PCI0.PEG0.HPME, MethodObj)    // 0 Arguments
-    External (_SB_.PCI0.PEG0.PEGP, UnknownObj)
+    //External (_SB_.PCI0.PEG0.PEGP, UnknownObj)
     External (_SB_.PCI0.PEG0.PEGP.DWBL, MethodObj)    // 0 Arguments
     External (_SB_.PCI0.PEG0.PEGP.LCDD._DCS, MethodObj)    // 0 Arguments
     External (_SB_.PCI0.PEG0.PEGP.NATK, MethodObj)    // 0 Arguments
@@ -9500,9 +9502,23 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
             \_SB.TPM.PTS (Arg0)
         }
     }
-
+    
+    Method (PINI, 0, NotSerialized)    // fix: _PINI Method
+    {
+        \_SB.PCI0.PEG0.PEGP._DSM (Buffer (0x10)
+            {
+                /* 0000 */    0xF8, 0xD8, 0x86, 0xA4, 0xDA, 0x0B, 0x1B, 0x47, 
+                /* 0008 */    0xA7, 0x2B, 0x60, 0x42, 0xA6, 0xB5, 0xBE, 0xE0
+            }, 0x0100, 0x1A, Buffer (0x04)
+            {
+                0x01, 0x00, 0x00, 0x03
+            })
+        \_SB.PCI0.PEG0.PEGP._PS3 ()        
+    }
+    
     Method (_WAK, 1, Serialized)  // _WAK: Wake
     {
+        PINI ()
         WAK (Arg0)
         ADBG ("_WAK")
         If (And (ICNF, 0x10))
@@ -9813,6 +9829,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
         Method (_INI, 0, NotSerialized)  // _INI: Initialize
         {
+            PINI ()
             Store (0x07DC, OSYS) /* \OSYS */
             If (CondRefOf (\_OSI, Local0))
             {
