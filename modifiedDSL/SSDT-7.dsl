@@ -2518,6 +2518,12 @@ DefinitionBlock ("SSDT-7.aml", "SSDT", 1, "SaSsdt", "SaSsdt ", 0x00003000)
                 Offset (0xBC), 
                 ASLS,   32
             }
+OperationRegion (IGD2, PCI_Config, 0x10, 4)
+Field (IGD2, AnyAcc, NoLock, Preserve)
+{
+	BAR1,32,
+}
+
 
             OperationRegion (IGDM, SystemMemory, ASLB, 0x2000)
             Field (IGDM, AnyAcc, NoLock, Preserve)
@@ -4157,6 +4163,133 @@ DefinitionBlock ("SSDT-7.aml", "SSDT", 1, "SaSsdt", "SaSsdt ", 0x00003000)
 
                 Return (D2AF (\_SB.CSTE))
             }
+        }
+    }
+    Scope (\_SB)
+    {
+        Device (PNLF)
+        {
+            // normal PNLF declares (note some of this probably not necessary)
+            Name (_ADR, Zero)
+            Name (_HID, EisaId ("APP0002"))
+            Name (_CID, "backlight")
+            Name (_UID, 10)
+            Name (_STA, 0x0B)
+            //define hardware register access for brightness
+            // you can see BAR1 value in RW-Everything under Bus00,02 Intel VGA controler PCI
+            // Note: Not sure which one is right here... for now, going with BAR1 masked
+            //OperationRegion (BRIT, SystemMemory, Subtract(\_SB.PCI0.IGPU.BAR1, 4), 0xe1184)
+            OperationRegion (BRIT, SystemMemory, And(\_SB.PCI0.IGPU.BAR1, Not(0xF)), 0xe1184)
+            Field (BRIT, AnyAcc, Lock, Preserve)
+            {
+                Offset(0x48250),
+                LEV2, 32,
+                LEVL, 32,
+                Offset(0x70040),
+                P0BL, 32,
+                Offset(0xc8250),
+                LEVW, 32,
+                LEVX, 32,
+                Offset(0xe1180),
+                PCHL, 32,
+            }
+            Method (_INI, 0, NotSerialized)
+            {
+                // If the BIOS actually sets the values prior to boot, this would be
+                // how (maybe) to capture them.  My Envy does not have the capability
+                // to set brightness and I find these values are not set.
+                // The current value could also be in LEVL, and probably is even
+                // though OS X seems to manipulate only the low 16-bits of LEVX to
+                // change brightness.
+                // Because the low-order 16-bits are set to zero on the Envy, enabling
+                // this code causes a blank screen before the login screena appears.
+                //
+                //Store(LEVX, Local0)
+                //Store(ShiftRight(Local0,16), Local1)
+                //Store(And(Local0,0xFFFF), Local2)
+                //Divide(Multiply(Local2, 0xad9), Local1, Local0)
+                //Or(Local0, 0xad90000, Local0)
+                //
+                //REVIEW: wait for vblank to change things
+                //While(LEqual (P0BL, Local1)) {}
+                //
+                // This is part of the "keep startup level"...
+                // see comment above.
+                //Store(Local0, LEVX)
+                //
+                // This 0xC value comes from looking what OS X initializes this
+                // register to after display sleep (using ACPIDebug/ACPIPoller)
+                Store(0xC0000000, LEVW)
+                // Because this laptop starts at full brightness, I just set it right
+                // here.  This is to insure _BQC and XBQC return the correct level
+                // at startup.
+                Store(0xad90ad9, LEVX)
+            }
+            // _BCM/_BQC: set/get for brightness level
+            Method (_BCM, 1, NotSerialized)
+            {
+                // store new backlight level
+                Store(Match(_BCL, MGE, Arg0, MTR, 0, 2), Local0)
+                If (LEqual(Local0, Ones)) { Subtract(SizeOf(_BCL), 1, Local0) }
+                Store(Or(DerefOf(Index(_BCL,Local0)),And(LEVX,0xFFFF0000)), LEVX)
+            }
+            Method (_BQC, 0, NotSerialized)
+            {
+                Store(Match(_BCL, MGE, And(LEVX, 0xFFFF), MTR, 0, 2), Local0)
+                If (LEqual(Local0, Ones)) { Subtract(SizeOf(_BCL), 1, Local0) }
+                Return(DerefOf(Index(_BCL, Local0)))
+            }
+            Method (_DOS, 1, NotSerialized)
+            {
+                // Note: Some systems have this defined in DSDT, so uncomment
+                // the next line if that is the case.
+                //External(^^PCI0.IGPU._DOS, MethodObj)
+                ^^PCI0.IGPU._DOS(Arg0)
+            }
+            // extended _BCM/_BQC for setting "in between" levels
+            Method (XBCM, 1, NotSerialized)
+            {
+                // store new backlight level
+                If (LGreater(Arg0, XRGH)) { Store(XRGH, Arg0) }
+                If (LAnd(Arg0, LLess(Arg0, XRGL))) { Store(XRGL, Arg0) }
+                Store(Or(Arg0,And(LEVX,0xFFFF0000)), LEVX)
+            }
+            Method (XBQC, 0, NotSerialized)
+            {
+                Store(And(LEVX,0xFFFF), Local0)
+                If (LGreater(Local0, XRGH)) { Store(XRGH, Local0) }
+                If (LAnd(Local0, LLess(Local0, XRGL))) { Store(XRGL, Local0) }
+                Return(Local0)
+            }
+            // Use XOPT=1 to disable smooth transitions
+            Name (XOPT, Zero)
+            // XRGL/XRGH: defines the valid range
+            Name (XRGL, 35)
+            Name (XRGH, 2777)
+            // _BCL: returns list of valid brightness levels
+            // first two entries describe ac/battery power levels
+            Name (_BCL, Package()
+            {
+                2777,
+                748,
+                0,
+                35, 39, 44, 50,
+                58, 67, 77, 88,
+                101, 115, 130, 147,
+                165, 184, 204, 226,
+                249, 273, 299, 326,
+                354, 383, 414, 446,
+                479, 514, 549, 587,
+                625, 665, 706, 748,
+                791, 836, 882, 930,
+                978, 1028, 1079, 1132,
+                1186, 1241, 1297, 1355,
+                1414, 1474, 1535, 1598,
+                1662, 1728, 1794, 1862,
+                1931, 2002, 2074, 2147,
+                2221, 2296, 2373, 2452,
+                2531, 2612, 2694, 2777,
+            })
         }
     }
 }
