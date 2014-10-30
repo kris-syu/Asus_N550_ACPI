@@ -25,9 +25,9 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
     External (_PR_.CPU0._PTC, UnknownObj)
     External (_PR_.CPU0._TSS, IntObj)
     External (_SB_.PCI0, DeviceObj)
-    External (_SB_.PCI0.GFX0, DeviceObj)
-    External (_SB_.PCI0.GFX0._DSM, MethodObj)
-    External (_SB_.PCI0.GFX0.LCDD, UnknownObj)
+    External (_SB_.PCI0.IGPU, DeviceObj)
+    External (_SB_.PCI0.IGPU._DSM, MethodObj)
+    External (_SB_.PCI0.IGPU.LCDD, UnknownObj)
     External (_SB_.PCI0.LPCB.EC0_.ECNV, MethodObj)    // 1 Arguments
     External (_SB_.PCI0.LPCB.EC0_.FBST, IntObj)
     External (_SB_.PCI0.LPCB.EC0_.SPIN, MethodObj)    // 2 Arguments
@@ -129,12 +129,12 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
 
         Method (DWBL, 0, NotSerialized)
         {
-            Notify (\_SB.PCI0.GFX0.LCDD, 0x87) // Device-Specific
+            Notify (\_SB.PCI0.IGPU.LCDD, 0x87) // Device-Specific
         }
 
         Method (UPBL, 0, NotSerialized)
         {
-            Notify (\_SB.PCI0.GFX0.LCDD, 0x86) // Device-Specific
+            Notify (\_SB.PCI0.IGPU.LCDD, 0x86) // Device-Specific
         }
 
         Name (_PSC, Zero)  // _PSC: Power State Current
@@ -244,7 +244,7 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
         Method (_DSM, 4, Serialized)  // _DSM: Device-Specific Method
         {
             CreateByteField (Arg0, 0x03, GUID)
-            Return (\_SB.PCI0.GFX0.HDSM (Arg0, Arg1, Arg2, Arg3))
+            Return (\_SB.PCI0.IGPU.HDSM (Arg0, Arg1, Arg2, Arg3))
         }
 
         Name (CTXT, Zero)
@@ -282,7 +282,7 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
         }
     }
 
-    Scope (\_SB.PCI0.GFX0)
+    Scope (\_SB.PCI0.IGPU)
     {
         Method (_INI, 0, NotSerialized)  // _INI: Initialize
         {
@@ -448,7 +448,7 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
             Name (T_0, Zero)  // _T_x: Emitted by ASL Compiler
             While (One)
             {
-                Store (ToInteger (Arg0), T_0) /* \_SB_.PCI0.GFX0.CTOI.T_0 */
+                Store (ToInteger (Arg0), T_0) /* \_SB_.PCI0.IGPU.CTOI.T_0 */
                 If (LEqual (T_0, One))
                 {
                     Return (One)
@@ -564,7 +564,7 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
             Name (BUFF, Zero)
             If (LEqual (Arg0, ToUUID ("a486d8f8-0bda-471b-a72b-6042a6b5bee0")))
             {
-                Store (One, OPCI) /* \_SB_.PCI0.GFX0.HDSM.OPCI */
+                Store (One, OPCI) /* \_SB_.PCI0.IGPU.HDSM.OPCI */
             }
 
             If (LOr (OPCI, LOr (SGCI, NBCI)))
@@ -624,15 +624,15 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
                     CreateDWordField (TEMP, Zero, STS0)
                     If (SGCI)
                     {
-                        Or (STS0, 0x0B0000BF, STS0) /* \_SB_.PCI0.GFX0.HDSM.STS0 */
-                        Or (STS0, ShiftLeft (SGNC, 0x08, SGNC) /* \_SB_.PCI0.GFX0.SGNC */, STS0) /* \_SB_.PCI0.GFX0.HDSM.STS0 */
+                        Or (STS0, 0x0B0000BF, STS0) /* \_SB_.PCI0.IGPU.HDSM.STS0 */
+                        Or (STS0, ShiftLeft (SGNC, 0x08, SGNC) /* \_SB_.PCI0.IGPU.SGNC */, STS0) /* \_SB_.PCI0.IGPU.HDSM.STS0 */
                     }
                     Else
                     {
-                        Or (STS0, Zero, STS0) /* \_SB_.PCI0.GFX0.HDSM.STS0 */
+                        Or (STS0, Zero, STS0) /* \_SB_.PCI0.IGPU.HDSM.STS0 */
                     }
 
-                    Return (TEMP) /* \_SB_.PCI0.GFX0.HDSM.TEMP */
+                    Return (TEMP) /* \_SB_.PCI0.IGPU.HDSM.TEMP */
                 }
 
                 If (LEqual (Arg2, 0x02))
@@ -647,8 +647,8 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
                     If (And (Local0, 0x10))
                     {
                         And (Local0, 0x0F, Local0)
-                        Store (Local0, GPSS) /* \_SB_.PCI0.GFX0.GPSS */
-                        Notify (\_SB.PCI0.GFX0, 0xD9) // Hardware-Specific
+                        Store (Local0, GPSS) /* \_SB_.PCI0.IGPU.GPSS */
+                        Notify (\_SB.PCI0.IGPU, 0xD9) // Hardware-Specific
                         Notify (\_SB.PCI0.WMI1, 0xD9) // Hardware-Specific
                     }
                     Else
@@ -658,12 +658,12 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
                         {
                             Store (GPSS, Local0)
                             Or (Local0, 0x10, Local0)
-                            Store (Zero, GPPO) /* \_SB_.PCI0.GFX0.GPPO */
+                            Store (Zero, GPPO) /* \_SB_.PCI0.IGPU.GPPO */
                         }
                     }
 
-                    Or (STS1, Local0, STS1) /* \_SB_.PCI0.GFX0.HDSM.STS1 */
-                    Return (TMP1) /* \_SB_.PCI0.GFX0.HDSM.TMP1 */
+                    Or (STS1, Local0, STS1) /* \_SB_.PCI0.IGPU.HDSM.STS1 */
+                    Return (TMP1) /* \_SB_.PCI0.IGPU.HDSM.TMP1 */
                 }
 
                 If (LEqual (Arg2, 0x03))
@@ -692,10 +692,10 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
 
                     If (LEqual (\_SB.PCI0.PEG0.PEGP.SGST (), 0x0F))
                     {
-                        Or (STS2, One, STS2) /* \_SB_.PCI0.GFX0.HDSM.STS2 */
+                        Or (STS2, One, STS2) /* \_SB_.PCI0.IGPU.HDSM.STS2 */
                     }
 
-                    Return (TMP2) /* \_SB_.PCI0.GFX0.HDSM.TMP2 */
+                    Return (TMP2) /* \_SB_.PCI0.IGPU.HDSM.TMP2 */
                 }
 
                 If (LEqual (Arg2, 0x04))
@@ -708,24 +708,24 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
                     ToInteger (Arg3, Local0)
                     Store (Local0, Local1)
                     ShiftRight (Local0, 0x10, Local0)
-                    And (Local0, One, USPM) /* \_SB_.PCI0.GFX0.USPM */
+                    And (Local0, One, USPM) /* \_SB_.PCI0.IGPU.USPM */
                     ShiftRight (Local1, 0x0D, Local1)
                     And (Local1, 0x03, Local1)
                     If (LNotEqual (Local1, GPSP))
                     {
                         If (LEqual (USPM, One))
                         {
-                            Store (Local1, GPSP) /* \_SB_.PCI0.GFX0.GPSP */
+                            Store (Local1, GPSP) /* \_SB_.PCI0.IGPU.GPSP */
                         }
                         Else
                         {
                             Store (GPSP, Local1)
-                            Or (STS3, 0x8000, STS3) /* \_SB_.PCI0.GFX0.HDSM.STS3 */
+                            Or (STS3, 0x8000, STS3) /* \_SB_.PCI0.IGPU.HDSM.STS3 */
                         }
                     }
 
-                    Or (STS3, ShiftLeft (Local1, 0x0D), STS3) /* \_SB_.PCI0.GFX0.HDSM.STS3 */
-                    Return (TMP3) /* \_SB_.PCI0.GFX0.HDSM.TMP3 */
+                    Or (STS3, ShiftLeft (Local1, 0x0D), STS3) /* \_SB_.PCI0.IGPU.HDSM.STS3 */
+                    Return (TMP3) /* \_SB_.PCI0.IGPU.HDSM.TMP3 */
                 }
 
                 If (LEqual (Arg2, 0x05))
@@ -738,43 +738,43 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
                     ToInteger (Arg3, Local0)
                     If (And (Local0, 0x80000000))
                     {
-                        Store (And (ShiftRight (Local0, 0x19), 0x1F), TLSN) /* \_SB_.PCI0.GFX0.TLSN */
+                        Store (And (ShiftRight (Local0, 0x19), 0x1F), TLSN) /* \_SB_.PCI0.IGPU.TLSN */
                         If (And (Local0, 0x40000000))
                         {
-                            Store (One, FDOS) /* \_SB_.PCI0.GFX0.FDOS */
+                            Store (One, FDOS) /* \_SB_.PCI0.IGPU.FDOS */
                         }
                     }
 
                     If (And (Local0, 0x01000000))
                     {
-                        Store (And (ShiftRight (Local0, 0x0C), 0x0FFF), GACD) /* \_SB_.PCI0.GFX0.GACD */
-                        Store (And (Local0, 0x0FFF), GATD) /* \_SB_.PCI0.GFX0.GATD */
-                        Store (CTOI (GACD), TLSN) /* \_SB_.PCI0.GFX0.TLSN */
+                        Store (And (ShiftRight (Local0, 0x0C), 0x0FFF), GACD) /* \_SB_.PCI0.IGPU.GACD */
+                        Store (And (Local0, 0x0FFF), GATD) /* \_SB_.PCI0.IGPU.GATD */
+                        Store (CTOI (GACD), TLSN) /* \_SB_.PCI0.IGPU.TLSN */
                         Increment (TLSN)
                         If (LGreater (TLSN, 0x0D))
                         {
-                            Store (One, TLSN) /* \_SB_.PCI0.GFX0.TLSN */
+                            Store (One, TLSN) /* \_SB_.PCI0.IGPU.TLSN */
                         }
 
                         SNXD (TLSN)
                     }
 
-                    Or (STS4, ShiftLeft (DHPE, 0x15), STS4) /* \_SB_.PCI0.GFX0.HDSM.STS4 */
-                    Or (STS4, ShiftLeft (DHPS, 0x14), STS4) /* \_SB_.PCI0.GFX0.HDSM.STS4 */
-                    Or (STS4, ShiftLeft (TLSN, 0x08), STS4) /* \_SB_.PCI0.GFX0.HDSM.STS4 */
-                    Or (STS4, ShiftLeft (DKST, 0x05), STS4) /* \_SB_.PCI0.GFX0.HDSM.STS4 */
-                    Or (STS4, ShiftLeft (LDES, 0x04), STS4) /* \_SB_.PCI0.GFX0.HDSM.STS4 */
-                    Or (STS4, DACE, STS4) /* \_SB_.PCI0.GFX0.HDSM.STS4 */
-                    Store (Zero, LDES) /* \_SB_.PCI0.GFX0.LDES */
-                    Store (Zero, DHPS) /* \_SB_.PCI0.GFX0.DHPS */
-                    Store (Zero, DHPE) /* \_SB_.PCI0.GFX0.DHPE */
-                    Store (Zero, DACE) /* \_SB_.PCI0.GFX0.DACE */
-                    Return (TMP4) /* \_SB_.PCI0.GFX0.HDSM.TMP4 */
+                    Or (STS4, ShiftLeft (DHPE, 0x15), STS4) /* \_SB_.PCI0.IGPU.HDSM.STS4 */
+                    Or (STS4, ShiftLeft (DHPS, 0x14), STS4) /* \_SB_.PCI0.IGPU.HDSM.STS4 */
+                    Or (STS4, ShiftLeft (TLSN, 0x08), STS4) /* \_SB_.PCI0.IGPU.HDSM.STS4 */
+                    Or (STS4, ShiftLeft (DKST, 0x05), STS4) /* \_SB_.PCI0.IGPU.HDSM.STS4 */
+                    Or (STS4, ShiftLeft (LDES, 0x04), STS4) /* \_SB_.PCI0.IGPU.HDSM.STS4 */
+                    Or (STS4, DACE, STS4) /* \_SB_.PCI0.IGPU.HDSM.STS4 */
+                    Store (Zero, LDES) /* \_SB_.PCI0.IGPU.LDES */
+                    Store (Zero, DHPS) /* \_SB_.PCI0.IGPU.DHPS */
+                    Store (Zero, DHPE) /* \_SB_.PCI0.IGPU.DHPE */
+                    Store (Zero, DACE) /* \_SB_.PCI0.IGPU.DACE */
+                    Return (TMP4) /* \_SB_.PCI0.IGPU.HDSM.TMP4 */
                 }
 
                 If (LEqual (Arg2, 0x06))
                 {
-                    Return (TLPK) /* \_SB_.PCI0.GFX0.TLPK */
+                    Return (TLPK) /* \_SB_.PCI0.IGPU.TLPK */
                 }
 
                 If (LEqual (Arg2, 0x10))
@@ -814,7 +814,7 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
                     })
                     If (LEqual (USRG, 0x564B))
                     {
-                        Return (OPVK) /* \_SB_.PCI0.GFX0.HDSM.OPVK */
+                        Return (OPVK) /* \_SB_.PCI0.IGPU.HDSM.OPVK */
                     }
 
                     Return (Zero)
@@ -863,10 +863,10 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
                     CreateField (Local0, 0x08, One, SNSR)
                     CreateField (Local0, 0x18, 0x03, DGPC)
                     CreateField (Local0, 0x1B, 0x02, HDAC)
-                    Store (One, OPEN) /* \_SB_.PCI0.GFX0.HDSM.OPEN */
-                    Store (One, SHPC) /* \_SB_.PCI0.GFX0.HDSM.SHPC */
-                    Store (One, HDAC) /* \_SB_.PCI0.GFX0.HDSM.HDAC */
-                    Store (One, DGPC) /* \_SB_.PCI0.GFX0.HDSM.DGPC */
+                    Store (One, OPEN) /* \_SB_.PCI0.IGPU.HDSM.OPEN */
+                    Store (One, SHPC) /* \_SB_.PCI0.IGPU.HDSM.SHPC */
+                    Store (One, HDAC) /* \_SB_.PCI0.IGPU.HDSM.HDAC */
+                    Store (One, DGPC) /* \_SB_.PCI0.IGPU.HDSM.DGPC */
                     If (ToInteger (DVSC))
                     {
                         If (ToInteger (DVSR))
@@ -879,10 +879,10 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
                         }
                     }
 
-                    Store (\_SB.PCI0.PEG0.PEGP.GPRF, SNSR) /* \_SB_.PCI0.GFX0.HDSM.SNSR */
+                    Store (\_SB.PCI0.PEG0.PEGP.GPRF, SNSR) /* \_SB_.PCI0.IGPU.HDSM.SNSR */
                     If (LNotEqual (\_SB.PCI0.PEG0.PEGP.SGST (), Zero))
                     {
-                        Store (0x03, CGCS) /* \_SB_.PCI0.GFX0.HDSM.CGCS */
+                        Store (0x03, CGCS) /* \_SB_.PCI0.IGPU.HDSM.CGCS */
                     }
 
                     Return (Local0)
@@ -893,10 +893,10 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
                     ToInteger (Arg3, Local0)
                     If (And (Local0, 0x02))
                     {
-                        Store (Zero, BUFF) /* \_SB_.PCI0.GFX0.HDSM.BUFF */
+                        Store (Zero, BUFF) /* \_SB_.PCI0.IGPU.HDSM.BUFF */
                         If (And (Local0, One))
                         {
-                            Store (One, BUFF) /* \_SB_.PCI0.GFX0.HDSM.BUFF */
+                            Store (One, BUFF) /* \_SB_.PCI0.IGPU.HDSM.BUFF */
                         }
                     }
 
@@ -1446,9 +1446,9 @@ DefinitionBlock ("SSDT-9.aml", "SSDT", 1, "OptRef", "OptTabl", 0x00001000)
                         CreateDWordField (Arg2, 0x10, REVI)
                         CreateDWordField (Arg2, 0x14, SFNC)
                         CreateField (Arg2, 0xE0, 0x20, XRG0)
-                        If (CondRefOf (\_SB.PCI0.GFX0._DSM))
+                        If (CondRefOf (\_SB.PCI0.IGPU._DSM))
                         {
-                            Return (\_SB.PCI0.GFX0._DSM(MUID,REVI,SFNC,XRG0)) /* External reference */
+                            Return (\_SB.PCI0.IGPU._DSM(MUID,REVI,SFNC,XRG0)) /* External reference */
                             //MUID
                             //REVI
                             //SFNC
