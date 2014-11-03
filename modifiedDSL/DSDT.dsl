@@ -3851,8 +3851,8 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                     Name (_HID, EisaId ("PNP0103"))  // _HID: Hardware ID
                     Name (_UID, Zero)  // _UID: Unique ID
                     Name (BUF0, ResourceTemplate()
-{
-    IRQNoFlags() { 0, 8, 11, 15 }
+			{
+    			IRQNoFlags() { 0, 8, 11, 15 }
 
                         Memory32Fixed (ReadWrite,
                             0xFED00000,         // Address Base
@@ -8445,6 +8445,41 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
             {
                 Return (GPRW (0x0D, 0x04))
             }
+
+            Method (_DSM, 4, NotSerialized)  // _DSM: Device-Specific Method
+            {
+                Store (Package (0x0A)
+                    {
+                        "built-in", 
+                        Buffer (One)
+                        {
+                             0x01                                           
+                        }, 
+
+                        "device-type", 
+                        Buffer (0x0F)
+                        {
+                            "Realtek ALC668"
+                        }, 
+
+                        "hda-gfx", 
+                        Buffer (0x0A)
+                        {
+                            "onboard-1"
+                        }, 
+
+                        "layout-id", 
+                        Buffer (0x04)
+                        {
+                             0x0C, 0x00, 0x00, 0x00                         
+                        }, 
+
+                        "PinConfigurations", 
+                        Buffer (Zero) {}
+                    }, Local0)
+                DTGP (Arg0, Arg1, Arg2, Arg3, RefOf (Local0))
+                Return (Local0)
+            }
         }
 
         Scope (RP01)
@@ -8945,6 +8980,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                 Or (HCON, 0x02, HCON) /* \_SB_.PCI0.SBUS.HCON */
                 Or (HSTS, 0xFF, HSTS) /* \_SB_.PCI0.SBUS.HSTS */
             }
+
         }
     }
 
@@ -11316,8 +11352,10 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                 Offset (0x8A), 
                 HKEN,   1, 
                 Offset (0x93), 
-                TH00,8,TH01,8, 
-                TH10,8,TH11,8, 
+                TH00,   8, 
+                TH01,   8, 
+                TH10,   8, 
+                TH11,   8, 
                 TSTP,   8, 
                 Offset (0x9C), 
                 CDT4,   8, 
@@ -11342,7 +11380,8 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                 B0TM,   16, 
                 B0C1,   16, 
                 B0C2,   16, 
-                XC30,8,XC31,8, 
+                XC30,   8, 
+                XC31,   8, 
                 B0C4,   16, 
                 Offset (0xD0), 
                 B1PN,   16, 
@@ -11355,16 +11394,19 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                 B1TM,   16, 
                 B1C1,   16, 
                 B1C2,   16, 
-                YC30,8,YC31,8, 
+                YC30,   8, 
+                YC31,   8, 
                 B1C4,   16, 
                 Offset (0xF0), 
                 Offset (0xF2), 
                 Offset (0xF4), 
-                B0S0,8,B0S1,8, 
+                B0S0,   8, 
+                B0S1,   8, 
                 Offset (0xF8), 
                 Offset (0xFA), 
                 Offset (0xFC), 
-                B1S0,8,B1S1,8
+                B1S0,   8, 
+                B1S1,   8
             }
 
             Name (SMBF, Zero)
@@ -13801,6 +13843,14 @@ BB1C,8,BB1D,8,BB1E,8,BB1F,8
 
                 Return (MEMD) /* \_SB_.ATKD.MEMD */
             }
+
+            Method (SKBL, 1, NotSerialized)
+            {
+                Store (Arg0, Local0)
+                Store (DerefOf (Index (PWKB, Local0)), Local1)
+                ^^PCI0.LPCB.EC0.WRAM (0x044B, Local1)
+                Return (One)
+            }
         }
     }
 
@@ -13928,7 +13978,7 @@ BB1C,8,BB1D,8,BB1E,8,BB1F,8
                 "M3N", 
                 " ", 
                 "LIon", 
-                "ASUSTeK"
+                "Apple Inc."
             })
             Name (PBST, Package (0x04)
             {
@@ -13958,7 +14008,7 @@ BB1C,8,BB1D,8,BB1E,8,BB1F,8
                 "M3N", 
                 " ", 
                 "LIon", 
-                "ASUSTeK"
+                "Apple Inc."
             })
             Name (NBIX, Package (0x14)
             {
@@ -19093,7 +19143,7 @@ BB1C,8,BB1D,8,BB1E,8,BB1F,8
                 {
                     If (LNotEqual (^^^IGPU.LCDD._DCS (), 0x1F))
                     {
-                        Return (One)
+                        //Return (One)
                     }
 
                     ^^^IGPU.DWBL ()
@@ -19106,7 +19156,7 @@ BB1C,8,BB1D,8,BB1E,8,BB1F,8
                     {
                         If (LNotEqual (^^^PEG0.PEGP.LCDD._DCS (), 0x1F))
                         {
-                            Return (One)
+                            //Return (One)
                         }
 
                         ^^^PEG0.PEGP.DWBL ()
@@ -19154,7 +19204,7 @@ BB1C,8,BB1D,8,BB1E,8,BB1F,8
                 }
             }
 
-            Return (One)
+            //Return (One)
         }
 
         Method (_Q0F, 0, NotSerialized)  // _Qxx: EC Query
@@ -19171,7 +19221,7 @@ BB1C,8,BB1D,8,BB1E,8,BB1F,8
                 {
                     If (LNotEqual (^^^IGPU.LCDD._DCS (), 0x1F))
                     {
-                        Return (One)
+                        //Return (One)
                     }
 
                     ^^^IGPU.UPBL ()
@@ -19184,7 +19234,7 @@ BB1C,8,BB1D,8,BB1E,8,BB1F,8
                     {
                         If (LNotEqual (^^^PEG0.PEGP.LCDD._DCS (), 0x1F))
                         {
-                            Return (One)
+                            //Return (One)
                         }
 
                         ^^^PEG0.PEGP.UPBL ()
@@ -19230,7 +19280,7 @@ BB1C,8,BB1D,8,BB1E,8,BB1F,8
                 }
             }
 
-            Return (One)
+            //Return (One)
         }
 
         Method (_Q10, 0, NotSerialized)  // _Qxx: EC Query
@@ -19273,7 +19323,7 @@ BB1C,8,BB1D,8,BB1E,8,BB1F,8
 
                 STB2 (0x19)
                 STB2 (0x99)
-                Return (One)
+                //Return (One)
             }
 
             FHKW ()
@@ -19370,7 +19420,7 @@ BB1C,8,BB1D,8,BB1E,8,BB1F,8
             }
 
             FHKS ()
-            Return (Zero) //warning fix
+            //Return (Zero) //warning fix
         }
 
         Method (_Q12, 0, NotSerialized)  // _Qxx: EC Query
@@ -19399,14 +19449,14 @@ BB1C,8,BB1D,8,BB1E,8,BB1F,8
                 STB2 (0x20)
                 STB2 (0xE0)
                 STB2 (0xA0)
-                Return (One)
+                //Return (One)
             }
 
             If (ATKP)
             {
                 ^^^^ATKD.IANE (0x32)
             }
-            Return (Zero) //warning fix
+            //Return (Zero) //warning fix
         }
 
         Method (_Q14, 0, NotSerialized)  // _Qxx: EC Query
@@ -19417,7 +19467,7 @@ BB1C,8,BB1D,8,BB1E,8,BB1F,8
                 STB2 (0x2E)
                 STB2 (0xE0)
                 STB2 (0xAE)
-                Return (One)
+                //Return (One)
             }
 
             If (LLess (AVOL, 0x0F))
@@ -19429,7 +19479,7 @@ BB1C,8,BB1D,8,BB1E,8,BB1F,8
             {
                 ^^^^ATKD.IANE (0x31)
             }
-            Return (Zero) //warning fix
+            //Return (Zero) //warning fix
         }
 
         Method (_Q15, 0, NotSerialized)  // _Qxx: EC Query
@@ -19440,7 +19490,7 @@ BB1C,8,BB1D,8,BB1E,8,BB1F,8
                 STB2 (0x30)
                 STB2 (0xE0)
                 STB2 (0xB0)
-                Return (One)
+                //Return (One)
             }
 
             If (LGreater (AVOL, Zero))
@@ -19452,7 +19502,7 @@ BB1C,8,BB1D,8,BB1E,8,BB1F,8
             {
                 ^^^^ATKD.IANE (0x30)
             }
-            Return (Zero) //warning fix
+            //Return (Zero) //warning fix
         }
 
         Method (_Q6F, 0, NotSerialized)  // _Qxx: EC Query
@@ -20111,7 +20161,7 @@ BB1C,8,BB1D,8,BB1E,8,BB1F,8
             Return (FSMI (0x09))
         }
 
-        Method (FREC, 1, NotSerialized)
+        Method (FREC, 1, Serialized)
         {
             If (LEqual (Arg0, 0x8000))
             {
@@ -20133,7 +20183,7 @@ BB1C,8,BB1D,8,BB1E,8,BB1F,8
         Method (_Q79, 0, NotSerialized)  // _Qxx: EC Query
         {
             ^^^^ATKD.IANE (0xB1)
-            Return (One)
+            //Return (One)
         }
     }
 
