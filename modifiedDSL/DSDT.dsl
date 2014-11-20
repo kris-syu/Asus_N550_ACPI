@@ -6737,6 +6737,52 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
             {
                 Return (GPRW (0x0D, 0x03))
             }
+            
+            Method (_DSM, 4, NotSerialized)  // _DSM: Device-Specific Method
+            {
+                If (LEqual (Arg2, Zero))
+                {
+                    Return (Buffer (One)
+                    {
+                         0x03                                           
+                    })
+                }
+
+                Return (Package (0x13)
+                {
+                    "device-id", 
+                    Buffer (0x04)
+                    {
+                         0x26, 0x8C, 0x00, 0x00                         
+                    }, 
+
+                    "built-in", 
+                    Buffer (One)
+                    {
+                         0x00                                           
+                    }, 
+
+                    "AAPL,clock-id", 
+                    Buffer (One)
+                    {
+                         0x02                                           
+                    }, 
+
+                    "device_type", 
+                    Buffer (0x05)
+                    {
+                        "EHCI"
+                    }, 
+
+                    "AAPL,standard-port-current-in-sleep", 
+                    0x1F4, 
+                    Buffer (One)
+                    {
+                         0x00                                           
+                    }
+                })
+            }
+
         }
 
         Device (EHC2)
@@ -7096,6 +7142,51 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
             Method (_PRW, 0, NotSerialized)  // _PRW: Power Resources for Wake
             {
                 Return (GPRW (0x0D, 0x03))
+            }
+
+            Method (_DSM, 4, NotSerialized)  // _DSM: Device-Specific Method
+            {
+                If (LEqual (Arg2, Zero))
+                {
+                    Return (Buffer (One)
+                    {
+                         0x03                                           
+                    })
+                }
+
+                Return (Package (0x13)
+                {
+                    "device-id", 
+                    Buffer (0x04)
+                    {
+                         0x2D, 0x8C, 0x00, 0x00                         
+                    }, 
+
+                    "built-in", 
+                    Buffer (One)
+                    {
+                         0x00                                           
+                    }, 
+
+                    "AAPL,clock-id", 
+                    Buffer (One)
+                    {
+                         0x02                                           
+                    }, 
+
+                    "device_type", 
+                    Buffer (0x05)
+                    {
+                        "EHCI"
+                    }, 
+
+                    "AAPL,standard-port-current-in-sleep", 
+                    0x1F4, 
+                    Buffer (One)
+                    {
+                         0x00                                           
+                    }
+                })
             }
         }
 
@@ -8421,6 +8512,42 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
             {
                 Return (GPRW (0x0D, 0x03))
             }
+
+            Method (_DSM, 4, NotSerialized)  // _DSM: Device-Specific Method
+            {
+                If (LEqual (Arg2, Zero))
+                {
+                    Return (Buffer (One)
+                    {
+                         0x03                                           
+                    })
+                }
+
+                Return (Package (0x0E)
+                {
+                    "AAPL,current-available", 
+                    0x9C4, 
+                    "AAPL,current-extra", 
+                    0x18E70, 
+                    "AAPL,current-extra-in-sleep", 
+                    0x18E70, 
+                    "AAPL,max-port-current-in-sleep", 
+                    0x9C4, 
+                    "AAPL,standard-port-current-in-sleep", 
+                    0x384, 
+                    "device-id", 
+                    Buffer (0x04)
+                    {
+                         0x31, 0x8C, 0x00, 0x00                         
+                    }, 
+
+                    "AAPL,clock-id", 
+                    Buffer (One)
+                    {
+                         0x00                                           
+                    }
+                })
+            }
         }
 
         Device (HDEF)
@@ -9556,7 +9683,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
     
     Method (_WAK, 1, Serialized)  // _WAK: Wake
     {
-        PINI ()
+        //PINI ()
         If (LOr (LLess(Arg0, 1), LGreater(Arg0,5))) 
         { 
             Store(3, Arg0) 
@@ -9564,6 +9691,9 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
         WAK(Arg0)
 
         ADBG ("_WAK")
+        
+        PINI ()
+
         If (And (ICNF, 0x10))
         {
             If (And (\_SB.PCI0.IGPU.TCHE, 0x0100))
