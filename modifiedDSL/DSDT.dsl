@@ -4977,13 +4977,47 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                         EndDependentFn ()
                     })
                 }
+                
+                /*
                 Method (_DSM, 4, NotSerialized)
                 {
                     If (LEqual (Arg2, Zero)) { Return (Buffer() { 0x03 } ) }
                     Return (Package()
                     {
-                        "compatible", "pci8086,9c43",
+                        "compatible", "pci8086,8c49",
                     })
+                }*/
+                
+                Method (_DSM, 4, NotSerialized)  // _DSM: Device-Specific Method
+                {
+                    Store (Package (0x08)
+                        {
+                            "device-id", 
+                            Buffer (0x04)
+                            {
+                                 0x49, 0x8C, 0x00, 0x00                         
+                            }, 
+
+                            "compatible", 
+                            Buffer (0x0D)
+                            {
+                                "pci8086,8c49"
+                            }, 
+
+                            "IOName", 
+                            Buffer (0x0D)
+                            {
+                                "pci8086,8c49"
+                            }, 
+
+                            "name", 
+                            Buffer (0x0D)
+                            {
+                                "pci8086,8c49"
+                            }
+                        }, Local0)
+                    DTGP (Arg0, Arg1, Arg2, Arg3, RefOf (Local0))
+                    Return (Local0)
                 }
             }
 
