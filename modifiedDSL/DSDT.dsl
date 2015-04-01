@@ -5482,19 +5482,26 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                     })
                 }
 
-                Device (PXSX)
+                Device (ARPT)
                 {
-                    Name (_ADR, Zero)  // _ADR: Address
                     
-                    Method (_PRW, 0, NotSerialized)  // _PRW: Power Resources for Wake
+                    Name (_ADR, Zero)
+                    Name (_PRW, Package (0x02) {0x09,0x04})
+                    Name (_SUN, One)
+                    Method (_DSM, 4, NotSerialized)
                     {
-                        Return (GPRW (0x09, 0x04))
+                        Store (Package (0x0C) {
+                            "AAPL,slot-name", "AirPort",
+                            "name", "AirPort Extreme",
+                            "model", Buffer (0x39) {"Broadcom BCM4322x 802.11 a/b/g/n Wireless Network Adapter"},
+                            "device_type", Buffer (0x07) {"AirPort"},
+                            "compatible", "pci14e4,43a0",
+                            "built-in", Buffer (One) {0x01}
+                        }, Local0)
+                        DTGP (Arg0, Arg1, Arg2, Arg3, RefOf (Local0))
+                        Return (Local0)
                     }
-                    
-                    Method (_RMV, 0, NotSerialized)  // _RMV: Removal Status
-                    {
-                        Return (HPCE) // \_SB_.PCI0.RP03.HPCE
-                    }
+
 
                 }
 
@@ -5540,7 +5547,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                             }
                         }
 
-                        Notify (PXSX, 0x02) // Device Wake
+                        Notify (ARPT, 0x02) // Device Wake
                     }
                 }
 
