@@ -4163,6 +4163,81 @@ Field (IGD2, AnyAcc, NoLock, Preserve)
 
                 Return (D2AF (\_SB.CSTE))
             }
+
+            
+            Method (_DSM, 4, NotSerialized)  // _DSM: Device-Specific Method
+            {
+                If (LEqual (Arg2, Zero))
+                {
+                    Return (Buffer (One)
+                    {
+                         0x03                                           
+                    })
+                }
+
+                Return (Package (0x14)
+                {
+                    "device-id", 
+                    Buffer (0x04)
+                    {
+                         0x12, 0x04, 0x00, 0x00
+                    }, 
+                    
+                    "AAPL00,DualLink", 
+                    Buffer (0x04)
+                    {
+                         0x01, 0x00, 0x00, 0x00
+                    }, 
+
+                    "AAPL,ig-platform-id", 
+                    Buffer (0x04)
+                    {
+                         0x00, 0x00, 0x16, 0x04
+                    }, 
+
+                    "AAPL,HasPanel", 
+                    Buffer (0x04)
+                    {
+                         0x01, 0x00, 0x00, 0x00
+                    }, 
+
+                    "AAPL,Haslid", 
+                    Buffer (0x04)
+                    {
+                         0x01, 0x00, 0x00, 0x00
+                    }, 
+
+                    "AAPL,backlight-control", 
+                    Buffer (0x04)
+                    {
+                         0x01, 0x00, 0x00, 0x00
+                    }, 
+
+                    "@0,backlight-control", 
+                    Buffer (0x04)
+                    {
+                         0x01, 0x00, 0x00, 0x00
+                    }, 
+
+                    "@0,AAPL,boot-display", 
+                    Buffer (0x04)
+                    {
+                         0x01, 0x00, 0x00, 0x00
+                    }, 
+
+                    "@0,built-in", 
+                    Buffer (One)
+                    {
+                         0x01
+                    }, 
+
+                    "hda-gfx", 
+                    Buffer (0x0A)
+                    {
+                        "onboard-1"
+                    }
+                })
+            }
         }
     }
     Scope (\_SB)

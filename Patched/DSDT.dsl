@@ -3851,8 +3851,8 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                     Name (_HID, EisaId ("PNP0103"))  // _HID: Hardware ID
                     Name (_UID, Zero)  // _UID: Unique ID
                     Name (BUF0, ResourceTemplate()
-			{
-    			IRQNoFlags() { 0, 8, 11, 15 }
+			        {
+    			        IRQNoFlags() { 0, 8, 11, 15 }
 
                         Memory32Fixed (ReadWrite,
                             0xFED00000,         // Address Base
@@ -4995,25 +4995,25 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                             "device-id", 
                             Buffer (0x04)
                             {
-                                 0x49, 0x8C, 0x00, 0x00                         
+                                 0x43, 0x9C, 0x00, 0x00                         
                             }, 
 
                             "compatible", 
                             Buffer (0x0D)
                             {
-                                "pci8086,8c49"
+                                "pci8086,9c43"
                             }, 
 
                             "IOName", 
                             Buffer (0x0D)
                             {
-                                "pci8086,8c49"
+                                "pci8086,9c43"
                             }, 
 
                             "name", 
                             Buffer (0x0D)
                             {
-                                "pci8086,8c49"
+                                "pci8086,9c43"
                             }
                         }, Local0)
                     DTGP (Arg0, Arg1, Arg2, Arg3, RefOf (Local0))
