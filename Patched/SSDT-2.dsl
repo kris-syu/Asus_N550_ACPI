@@ -30,7 +30,7 @@ DefinitionBlock ("ssdt.aml", "SSDT", 1, "APPLE ", "CpuPm", 0x00015700)
     {
         Method (_INI, 0, NotSerialized)
         {
-            Store ("ssdtPRGen version....: 15.7 / Mac OS X 10.10.3 (14D131)", Debug)
+            Store ("version..............: Mac OS X 10.10.3 (14D131)", Debug)
             Store ("target processor.....: i7-4700HQ", Debug)
             Store ("source processor.....: Intel(R) Core(TM) i7-4700HQ CPU @ 2.40GHz", Debug)
             Store ("baseFrequency........: 800", Debug)
