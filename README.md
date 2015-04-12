@@ -25,6 +25,11 @@ ASUS N550JV ACPI PATCH PROJECT
 ###  进度
 
 
+Apr 11, 2015
+  
+      +  重写了 _Q0E 和 _Q0F 方法使得 Fn + F5/F6 键可用，64级亮度调节
+        （F14/F15 是 17 级）
+
 Apr 9, 2015
   
       +  修改 LPCB 内建方法中的 ID 为0x9c43 以驱动 AppleLPC
