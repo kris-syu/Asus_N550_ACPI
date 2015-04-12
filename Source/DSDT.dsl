@@ -15,7 +15,9 @@
  *     OEM Revision     0x00000012 (18)
  *     Compiler ID      "INTL"
  *     Compiler Version 0x20120711 (538052369)
+ *     GitHub           https://github.com/xutianpei/Asus_N550_ACPI.git
  */
+
 DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 {
     //DTGP Method

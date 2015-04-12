@@ -15,6 +15,7 @@
  *     OEM Revision     0x00001000 (4096)
  *     Compiler ID      "INTL"
  *     Compiler Version 0x20091112 (537465106)
+ *     GitHub           https://github.com/xutianpei/Asus_N550_ACPI.git
  */
 DefinitionBlock ("SSDT-6.aml", "SSDT", 1, "SataRe", "SataTabl", 0x00001000)
 {
