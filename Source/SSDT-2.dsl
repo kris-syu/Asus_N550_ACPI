@@ -13,6 +13,7 @@
  *     OEM Revision     0x00015700 (87808)
  *     Compiler ID      "INTL"
  *     Compiler Version 0x20150410 (538182160)
+ *     GitHub           https://github.com/xutianpei/Asus_N550_ACPI.git
  */
 
 DefinitionBlock ("ssdt.aml", "SSDT", 1, "APPLE ", "CpuPm", 0x00015700)

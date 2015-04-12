@@ -16,7 +16,7 @@ ASUS N550JV ACPI PATCH PROJECT
   
 ###  使用方法
 
->1.  拷贝 /Patched/*.aml 至 /Volumes/EFI/EFI/CLOVER/ACPI/patched/  
+>1.  拷贝 /Compiled/*.aml 至 /Volumes/EFI/EFI/CLOVER/ACPI/patched/  
 
 >2.  编辑 /Volumes/EFI/EFI/CLOVER/config.plist  
      修改 /ACPI/DSDT/Name 的值为 DSDT.aml  

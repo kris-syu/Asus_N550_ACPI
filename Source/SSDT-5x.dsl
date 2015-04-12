@@ -15,6 +15,7 @@
  *     OEM Revision     0x00003000 (12288)
  *     Compiler ID      "INTL"
  *     Compiler Version 0x20051117 (537202967)
+ *     GitHub           https://github.com/xutianpei/Asus_N550_ACPI.git
  */
 DefinitionBlock ("SSDT-5x.aml", "SSDT", 1, "PmRef", "ApCst", 0x00003000)
 {
