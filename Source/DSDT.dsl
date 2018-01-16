@@ -76,7 +76,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
     External(_SB_.PCI0.PEG0.PEGP._DSM, MethodObj)    // Fix: Object does not exit
     External(_SB_.PCI0.PEG0.PEGP._PS3, MethodObj)    // Fix: Object does not exit
     External (_SB_.PCI0.PAUD.PUAM, MethodObj)    // Warning: Unresolved method, guessing 0 arguments
-    External (_SB_.PCI0.XHC_.DUAM, MethodObj)    // Warning: Unresolved method, guessing 0 arguments
+    External (_SB_.PCI0.XHC1.DUAM, MethodObj)    // Warning: Unresolved method, guessing 0 arguments
     External (_SB_.TPM_.PTS_, MethodObj)    // Warning: Unresolved method, guessing 1 arguments
 
     External (_PR_.CPU0._PPC, IntObj)
@@ -222,7 +222,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
     Name (SS3, One)
     Name (SS4, One)
     Name (IOST, 0x4400)
-    Name (TOPM, 0x00000000)
+    Name (TOPM, Zero)
     Name (ROMS, 0xFFE00000)
     Name (VGAF, One)
     OperationRegion (GNVS, SystemMemory, 0xCAA73C18, 0x02A3)
@@ -1856,9 +1856,9 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                 CreateDWordField (Local0, Zero, CDW1)
                 CreateDWordField (Local0, 0x04, CDW2)
                 CreateDWordField (Local0, 0x08, CDW3)
-                If (^XHC.CUID (Arg0))
+                If (^XHC1.CUID (Arg0))
                 {
-                    Return (^XHC.POSC (Arg1, Arg2, Arg3))
+                    Return (^XHC1.POSC (Arg1, Arg2, Arg3))
                 }
                 Else
                 {
@@ -1866,7 +1866,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                     {
                         If (LEqual (XCNT, Zero))
                         {
-                            ^XHC.XSEL ()
+                            ^XHC1.XSEL ()
                             Increment (XCNT)
                         }
                     }
@@ -6776,53 +6776,22 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                 }
             }
 
-            Method (_PRW, 0, NotSerialized)  // _PRW: Power Resources for Wake
-            {
-                Return (GPRW (0x0D, 0x03))
-            }
             
-            Method (_DSM, 4, NotSerialized)  // _DSM: Device-Specific Method
+            
+            
+            Name(_PRW, Package() { 0x0D, 0 })
+            Method (_DSM, 4, NotSerialized)
             {
-                If (LEqual (Arg2, Zero))
+                If (LEqual (Arg2, Zero)) { Return (Buffer() { 0x03 } ) }
+                Return (Package()
                 {
-                    Return (Buffer (One)
-                    {
-                         0x03                                           
-                    })
-                }
-
-                Return (Package (0x13)
-                {
-                    "device-id", 
-                    Buffer (0x04)
-                    {
-                         0x26, 0x8C, 0x00, 0x00                         
-                    }, 
-
-                    "built-in", 
-                    Buffer (One)
-                    {
-                         0x00                                           
-                    }, 
-
-                    "AAPL,clock-id", 
-                    Buffer (One)
-                    {
-                         0x02                                           
-                    }, 
-
-                    "device_type", 
-                    Buffer (0x05)
-                    {
-                        "EHCI"
-                    }, 
-
-                    "AAPL,standard-port-current-in-sleep", 
-                    0x1F4, 
-                    Buffer (One)
-                    {
-                         0x00                                           
-                    }
+                    "subsystem-id", Buffer() { 0x70, 0x72, 0x00, 0x00 },
+                    "subsystem-vendor-id", Buffer() { 0x86, 0x80, 0x00, 0x00 },
+                    "AAPL,current-available", 2100,
+                    "AAPL,current-extra", 2200,
+                    "AAPL,current-extra-in-sleep", 1600,
+                    "AAPL,device-internal", 0x02,
+                    "AAPL,max-port-current-in-sleep", 2100,
                 })
             }
 
@@ -7182,58 +7151,27 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                 }
             }
 
-            Method (_PRW, 0, NotSerialized)  // _PRW: Power Resources for Wake
+            
+
+            
+            Name(_PRW, Package() { 0x0D, 0 })
+            Method (_DSM, 4, NotSerialized)
             {
-                Return (GPRW (0x0D, 0x03))
-            }
-
-            Method (_DSM, 4, NotSerialized)  // _DSM: Device-Specific Method
-            {
-                If (LEqual (Arg2, Zero))
+                If (LEqual (Arg2, Zero)) { Return (Buffer() { 0x03 } ) }
+                Return (Package()
                 {
-                    Return (Buffer (One)
-                    {
-                         0x03                                           
-                    })
-                }
-
-                Return (Package (0x13)
-                {
-                    "device-id", 
-                    Buffer (0x04)
-                    {
-                         0x2D, 0x8C, 0x00, 0x00                         
-                    }, 
-
-                    "built-in", 
-                    Buffer (One)
-                    {
-                         0x00                                           
-                    }, 
-
-                    "AAPL,clock-id", 
-                    Buffer (One)
-                    {
-                         0x02                                           
-                    }, 
-
-                    "device_type", 
-                    Buffer (0x05)
-                    {
-                        "EHCI"
-                    }, 
-
-                    "AAPL,standard-port-current-in-sleep", 
-                    0x1F4, 
-                    Buffer (One)
-                    {
-                         0x00                                           
-                    }
+                    "subsystem-id", Buffer() { 0x70, 0x72, 0x00, 0x00 },
+                    "subsystem-vendor-id", Buffer() { 0x86, 0x80, 0x00, 0x00 },
+                    "AAPL,current-available", 2100,
+                    "AAPL,current-extra", 2200,
+                    "AAPL,current-extra-in-sleep", 1600,
+                    "AAPL,device-internal", 0x02,
+                    "AAPL,max-port-current-in-sleep", 2100,
                 })
             }
         }
 
-        Device (XHC)
+        Device (XHC1)
         {
             Name (_ADR, 0x00140000)  // _ADR: Address
             OperationRegion (XPRT, PCI_Config, Zero, 0x0100)
@@ -7270,12 +7208,12 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                 CreateDWordField (Arg2, 0x08, CDW3)
                 If (LNotEqual (Arg1, One))
                 {
-                    Or (CDW1, 0x08, CDW1) /* \_SB_.PCI0.XHC_.POSC.CDW1 */
+                    Or (CDW1, 0x08, CDW1) /* \_SB_.PCI0.XHC1.POSC.CDW1 */
                 }
 
                 If (LEqual (XHCI, Zero))
                 {
-                    Or (CDW1, 0x02, CDW1) /* \_SB_.PCI0.XHC_.POSC.CDW1 */
+                    Or (CDW1, 0x02, CDW1) /* \_SB_.PCI0.XHC1.POSC.CDW1 */
                 }
 
                 If (LNot (And (CDW1, One)))
@@ -7298,13 +7236,13 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                 If (LOr (LEqual (XHCI, 0x02), LEqual (XHCI, 0x03)))
                 {
                     Store (One, XUSB) /* \_SB_.XUSB */
-                    Store (One, XRST) /* \_SB_.PCI0.XHC_.XRST */
+                    Store (One, XRST) /* \_SB_.PCI0.XHC1.XRST */
                     Store (Zero, Local0)
                     And (PR3, 0xFFFFFFC0, Local0)
-                    Or (Local0, PR3M, PR3) /* \_SB_.PCI0.XHC_.PR3_ */
+                    Or (Local0, PR3M, PR3) /* \_SB_.PCI0.XHC1.PR3_ */
                     Store (Zero, Local0)
                     And (PR2, 0xFFFF8000, Local0)
-                    Or (Local0, PR2M, PR2) /* \_SB_.PCI0.XHC_.PR2_ */
+                    Or (Local0, PR2M, PR2) /* \_SB_.PCI0.XHC1.PR2_ */
                 }
             }
 
@@ -7312,10 +7250,10 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
             {
                 If (LOr (LEqual (XHCI, 0x02), LEqual (XHCI, 0x03)))
                 {
-                    And (PR3, 0xFFFFFFC0, PR3) /* \_SB_.PCI0.XHC_.PR3_ */
-                    And (PR2, 0xFFFF8000, PR2) /* \_SB_.PCI0.XHC_.PR2_ */
+                    And (PR3, 0xFFFFFFC0, PR3) /* \_SB_.PCI0.XHC1.PR3_ */
+                    And (PR2, 0xFFFF8000, PR2) /* \_SB_.PCI0.XHC1.PR2_ */
                     Store (Zero, XUSB) /* \_SB_.XUSB */
-                    Store (Zero, XRST) /* \_SB_.PCI0.XHC_.XRST */
+                    Store (Zero, XRST) /* \_SB_.PCI0.XHC1.XRST */
                 }
             }
 
@@ -7360,7 +7298,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
                         Store (DerefOf (Index (CNTB, Zero)), Local0)
                         Store (Local0, Index (UPCP, Zero))
-                        Return (UPCP) /* \_SB_.PCI0.XHC_.RHUB.HS01._UPC.UPCP */
+                        Return (UPCP) /* \_SB_.PCI0.XHC1.RHUB.HS01._UPC.UPCP */
                     }
 
                     Method (_PLD, 0, Serialized)  // _PLD: Physical Location of Device
@@ -7382,10 +7320,10 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                         CreateBitField (DerefOf (Index (PLDP, Zero)), 0x40, VIS)
                         If (LNot (And (PR2, One)))
                         {
-                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC_.RHUB.HS01._PLD.VIS_ */
+                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC1.RHUB.HS01._PLD.VIS_ */
                         }
 
-                        Return (PLDP) /* \_SB_.PCI0.XHC_.RHUB.HS01._PLD.PLDP */
+                        Return (PLDP) /* \_SB_.PCI0.XHC1.RHUB.HS01._PLD.PLDP */
                     }
                 }
 
@@ -7409,7 +7347,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
                         Store (DerefOf (Index (CNTB, One)), Local0)
                         Store (Local0, Index (UPCP, Zero))
-                        Return (UPCP) /* \_SB_.PCI0.XHC_.RHUB.HS02._UPC.UPCP */
+                        Return (UPCP) /* \_SB_.PCI0.XHC1.RHUB.HS02._UPC.UPCP */
                     }
 
                     Method (_PLD, 0, Serialized)  // _PLD: Physical Location of Device
@@ -7431,10 +7369,10 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                         CreateBitField (DerefOf (Index (PLDP, Zero)), 0x40, VIS)
                         If (LNot (And (PR2, 0x02)))
                         {
-                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC_.RHUB.HS02._PLD.VIS_ */
+                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC1.RHUB.HS02._PLD.VIS_ */
                         }
 
-                        Return (PLDP) /* \_SB_.PCI0.XHC_.RHUB.HS02._PLD.PLDP */
+                        Return (PLDP) /* \_SB_.PCI0.XHC1.RHUB.HS02._PLD.PLDP */
                     }
                 }
 
@@ -7458,7 +7396,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
                         Store (DerefOf (Index (CNTB, 0x02)), Local0)
                         Store (Local0, Index (UPCP, Zero))
-                        Return (UPCP) /* \_SB_.PCI0.XHC_.RHUB.HS03._UPC.UPCP */
+                        Return (UPCP) /* \_SB_.PCI0.XHC1.RHUB.HS03._UPC.UPCP */
                     }
 
                     Method (_PLD, 0, Serialized)  // _PLD: Physical Location of Device
@@ -7480,10 +7418,10 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                         CreateBitField (DerefOf (Index (PLDP, Zero)), 0x40, VIS)
                         If (LNot (And (PR2, 0x04)))
                         {
-                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC_.RHUB.HS03._PLD.VIS_ */
+                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC1.RHUB.HS03._PLD.VIS_ */
                         }
 
-                        Return (PLDP) /* \_SB_.PCI0.XHC_.RHUB.HS03._PLD.PLDP */
+                        Return (PLDP) /* \_SB_.PCI0.XHC1.RHUB.HS03._PLD.PLDP */
                     }
                 }
 
@@ -7507,7 +7445,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
                         Store (DerefOf (Index (CNTB, 0x03)), Local0)
                         Store (Local0, Index (UPCP, Zero))
-                        Return (UPCP) /* \_SB_.PCI0.XHC_.RHUB.HS04._UPC.UPCP */
+                        Return (UPCP) /* \_SB_.PCI0.XHC1.RHUB.HS04._UPC.UPCP */
                     }
 
                     Method (_PLD, 0, Serialized)  // _PLD: Physical Location of Device
@@ -7529,10 +7467,10 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                         CreateBitField (DerefOf (Index (PLDP, Zero)), 0x40, VIS)
                         If (LNot (And (PR2, 0x08)))
                         {
-                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC_.RHUB.HS04._PLD.VIS_ */
+                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC1.RHUB.HS04._PLD.VIS_ */
                         }
 
-                        Return (PLDP) /* \_SB_.PCI0.XHC_.RHUB.HS04._PLD.PLDP */
+                        Return (PLDP) /* \_SB_.PCI0.XHC1.RHUB.HS04._PLD.PLDP */
                     }
                 }
 
@@ -7556,7 +7494,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
                         Store (DerefOf (Index (CNTB, 0x04)), Local0)
                         Store (Local0, Index (UPCP, Zero))
-                        Return (UPCP) /* \_SB_.PCI0.XHC_.RHUB.HS05._UPC.UPCP */
+                        Return (UPCP) /* \_SB_.PCI0.XHC1.RHUB.HS05._UPC.UPCP */
                     }
 
                     Method (_PLD, 0, Serialized)  // _PLD: Physical Location of Device
@@ -7578,10 +7516,10 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                         CreateBitField (DerefOf (Index (PLDP, Zero)), 0x40, VIS)
                         If (LNot (And (PR2, 0x10)))
                         {
-                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC_.RHUB.HS05._PLD.VIS_ */
+                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC1.RHUB.HS05._PLD.VIS_ */
                         }
 
-                        Return (PLDP) /* \_SB_.PCI0.XHC_.RHUB.HS05._PLD.PLDP */
+                        Return (PLDP) /* \_SB_.PCI0.XHC1.RHUB.HS05._PLD.PLDP */
                     }
                 }
 
@@ -7605,7 +7543,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
                         Store (DerefOf (Index (CNTB, 0x05)), Local0)
                         Store (Local0, Index (UPCP, Zero))
-                        Return (UPCP) /* \_SB_.PCI0.XHC_.RHUB.HS06._UPC.UPCP */
+                        Return (UPCP) /* \_SB_.PCI0.XHC1.RHUB.HS06._UPC.UPCP */
                     }
 
                     Method (_PLD, 0, Serialized)  // _PLD: Physical Location of Device
@@ -7627,10 +7565,10 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                         CreateBitField (DerefOf (Index (PLDP, Zero)), 0x40, VIS)
                         If (LNot (And (PR2, 0x20)))
                         {
-                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC_.RHUB.HS06._PLD.VIS_ */
+                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC1.RHUB.HS06._PLD.VIS_ */
                         }
 
-                        Return (PLDP) /* \_SB_.PCI0.XHC_.RHUB.HS06._PLD.PLDP */
+                        Return (PLDP) /* \_SB_.PCI0.XHC1.RHUB.HS06._PLD.PLDP */
                     }
                 }
 
@@ -7654,7 +7592,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
                         Store (DerefOf (Index (CNTB, 0x06)), Local0)
                         Store (Local0, Index (UPCP, Zero))
-                        Return (UPCP) /* \_SB_.PCI0.XHC_.RHUB.HS07._UPC.UPCP */
+                        Return (UPCP) /* \_SB_.PCI0.XHC1.RHUB.HS07._UPC.UPCP */
                     }
 
                     Method (_PLD, 0, Serialized)  // _PLD: Physical Location of Device
@@ -7676,10 +7614,10 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                         CreateBitField (DerefOf (Index (PLDP, Zero)), 0x40, VIS)
                         If (LNot (And (PR2, 0x40)))
                         {
-                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC_.RHUB.HS07._PLD.VIS_ */
+                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC1.RHUB.HS07._PLD.VIS_ */
                         }
 
-                        Return (PLDP) /* \_SB_.PCI0.XHC_.RHUB.HS07._PLD.PLDP */
+                        Return (PLDP) /* \_SB_.PCI0.XHC1.RHUB.HS07._PLD.PLDP */
                     }
                 }
 
@@ -7703,7 +7641,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
                         Store (DerefOf (Index (CNTB, 0x07)), Local0)
                         Store (Local0, Index (UPCP, Zero))
-                        Return (UPCP) /* \_SB_.PCI0.XHC_.RHUB.HS08._UPC.UPCP */
+                        Return (UPCP) /* \_SB_.PCI0.XHC1.RHUB.HS08._UPC.UPCP */
                     }
 
                     Method (_PLD, 0, Serialized)  // _PLD: Physical Location of Device
@@ -7725,10 +7663,10 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                         CreateBitField (DerefOf (Index (PLDP, Zero)), 0x40, VIS)
                         If (LNot (And (PR2, 0x80)))
                         {
-                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC_.RHUB.HS08._PLD.VIS_ */
+                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC1.RHUB.HS08._PLD.VIS_ */
                         }
 
-                        Return (PLDP) /* \_SB_.PCI0.XHC_.RHUB.HS08._PLD.PLDP */
+                        Return (PLDP) /* \_SB_.PCI0.XHC1.RHUB.HS08._PLD.PLDP */
                     }
                 }
 
@@ -7752,7 +7690,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
                         Store (DerefOf (Index (CNTB, 0x08)), Local0)
                         Store (Local0, Index (UPCP, Zero))
-                        Return (UPCP) /* \_SB_.PCI0.XHC_.RHUB.HS09._UPC.UPCP */
+                        Return (UPCP) /* \_SB_.PCI0.XHC1.RHUB.HS09._UPC.UPCP */
                     }
 
                     Method (_PLD, 0, Serialized)  // _PLD: Physical Location of Device
@@ -7774,15 +7712,15 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                         CreateBitField (DerefOf (Index (PLDP, Zero)), 0x40, VIS)
                         If (LNot (And (PR2, 0x0100)))
                         {
-                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC_.RHUB.HS09._PLD.VIS_ */
+                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC1.RHUB.HS09._PLD.VIS_ */
                         }
 
                         If (LEqual (And (CDID, 0xF000), 0x9000))
                         {
-                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC_.RHUB.HS09._PLD.VIS_ */
+                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC1.RHUB.HS09._PLD.VIS_ */
                         }
 
-                        Return (PLDP) /* \_SB_.PCI0.XHC_.RHUB.HS09._PLD.PLDP */
+                        Return (PLDP) /* \_SB_.PCI0.XHC1.RHUB.HS09._PLD.PLDP */
                     }
                 }
 
@@ -7828,7 +7766,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
                         Store (DerefOf (Index (CNTB, 0x09)), Local0)
                         Store (Local0, Index (UPCP, Zero))
-                        Return (UPCP) /* \_SB_.PCI0.XHC_.RHUB.HS10._UPC.UPCP */
+                        Return (UPCP) /* \_SB_.PCI0.XHC1.RHUB.HS10._UPC.UPCP */
                     }
 
                     Method (_PLD, 0, Serialized)  // _PLD: Physical Location of Device
@@ -7850,10 +7788,10 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                         CreateBitField (DerefOf (Index (PLDP, Zero)), 0x40, VIS)
                         If (LNot (And (PR2, 0x0200)))
                         {
-                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC_.RHUB.HS10._PLD.VIS_ */
+                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC1.RHUB.HS10._PLD.VIS_ */
                         }
 
-                        Return (PLDP) /* \_SB_.PCI0.XHC_.RHUB.HS10._PLD.PLDP */
+                        Return (PLDP) /* \_SB_.PCI0.XHC1.RHUB.HS10._PLD.PLDP */
                     }
                 }
 
@@ -7899,7 +7837,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
                         Store (DerefOf (Index (CNTB, 0x0A)), Local0)
                         Store (Local0, Index (UPCP, Zero))
-                        Return (UPCP) /* \_SB_.PCI0.XHC_.RHUB.HS11._UPC.UPCP */
+                        Return (UPCP) /* \_SB_.PCI0.XHC1.RHUB.HS11._UPC.UPCP */
                     }
 
                     Method (_PLD, 0, Serialized)  // _PLD: Physical Location of Device
@@ -7921,10 +7859,10 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                         CreateBitField (DerefOf (Index (PLDP, Zero)), 0x40, VIS)
                         If (LNot (And (PR2, 0x0400)))
                         {
-                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC_.RHUB.HS11._PLD.VIS_ */
+                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC1.RHUB.HS11._PLD.VIS_ */
                         }
 
-                        Return (PLDP) /* \_SB_.PCI0.XHC_.RHUB.HS11._PLD.PLDP */
+                        Return (PLDP) /* \_SB_.PCI0.XHC1.RHUB.HS11._PLD.PLDP */
                     }
                 }
 
@@ -7970,7 +7908,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
                         Store (DerefOf (Index (CNTB, 0x0B)), Local0)
                         Store (Local0, Index (UPCP, Zero))
-                        Return (UPCP) /* \_SB_.PCI0.XHC_.RHUB.HS12._UPC.UPCP */
+                        Return (UPCP) /* \_SB_.PCI0.XHC1.RHUB.HS12._UPC.UPCP */
                     }
 
                     Method (_PLD, 0, Serialized)  // _PLD: Physical Location of Device
@@ -7992,10 +7930,10 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                         CreateBitField (DerefOf (Index (PLDP, Zero)), 0x40, VIS)
                         If (LNot (And (PR2, 0x0800)))
                         {
-                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC_.RHUB.HS12._PLD.VIS_ */
+                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC1.RHUB.HS12._PLD.VIS_ */
                         }
 
-                        Return (PLDP) /* \_SB_.PCI0.XHC_.RHUB.HS12._PLD.PLDP */
+                        Return (PLDP) /* \_SB_.PCI0.XHC1.RHUB.HS12._PLD.PLDP */
                     }
                 }
 
@@ -8041,7 +7979,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
                         Store (DerefOf (Index (CNTB, 0x0C)), Local0)
                         Store (Local0, Index (UPCP, Zero))
-                        Return (UPCP) /* \_SB_.PCI0.XHC_.RHUB.HS13._UPC.UPCP */
+                        Return (UPCP) /* \_SB_.PCI0.XHC1.RHUB.HS13._UPC.UPCP */
                     }
 
                     Method (_PLD, 0, Serialized)  // _PLD: Physical Location of Device
@@ -8063,10 +8001,10 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                         CreateBitField (DerefOf (Index (PLDP, Zero)), 0x40, VIS)
                         If (LNot (And (PR2, 0x1000)))
                         {
-                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC_.RHUB.HS13._PLD.VIS_ */
+                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC1.RHUB.HS13._PLD.VIS_ */
                         }
 
-                        Return (PLDP) /* \_SB_.PCI0.XHC_.RHUB.HS13._PLD.PLDP */
+                        Return (PLDP) /* \_SB_.PCI0.XHC1.RHUB.HS13._PLD.PLDP */
                     }
                 }
 
@@ -8101,7 +8039,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
                         Store (DerefOf (Index (CNTB, 0x0D)), Local0)
                         Store (Local0, Index (UPCP, Zero))
-                        Return (UPCP) /* \_SB_.PCI0.XHC_.RHUB.HS14._UPC.UPCP */
+                        Return (UPCP) /* \_SB_.PCI0.XHC1.RHUB.HS14._UPC.UPCP */
                     }
 
                     Method (_PLD, 0, Serialized)  // _PLD: Physical Location of Device
@@ -8123,10 +8061,10 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                         CreateBitField (DerefOf (Index (PLDP, Zero)), 0x40, VIS)
                         If (LNot (And (PR2, 0x2000)))
                         {
-                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC_.RHUB.HS14._PLD.VIS_ */
+                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC1.RHUB.HS14._PLD.VIS_ */
                         }
 
-                        Return (PLDP) /* \_SB_.PCI0.XHC_.RHUB.HS14._PLD.PLDP */
+                        Return (PLDP) /* \_SB_.PCI0.XHC1.RHUB.HS14._PLD.PLDP */
                     }
                 }
 
@@ -8161,7 +8099,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
                         Store (DerefOf (Index (CNTB, 0x0E)), Local0)
                         Store (Local0, Index (UPCP, Zero))
-                        Return (UPCP) /* \_SB_.PCI0.XHC_.RHUB.HS15._UPC.UPCP */
+                        Return (UPCP) /* \_SB_.PCI0.XHC1.RHUB.HS15._UPC.UPCP */
                     }
 
                     Method (_PLD, 0, Serialized)  // _PLD: Physical Location of Device
@@ -8183,10 +8121,10 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                         CreateBitField (DerefOf (Index (PLDP, Zero)), 0x40, VIS)
                         If (LNot (And (PR2, 0x4000)))
                         {
-                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC_.RHUB.HS15._PLD.VIS_ */
+                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC1.RHUB.HS15._PLD.VIS_ */
                         }
 
-                        Return (PLDP) /* \_SB_.PCI0.XHC_.RHUB.HS15._PLD.PLDP */
+                        Return (PLDP) /* \_SB_.PCI0.XHC1.RHUB.HS15._PLD.PLDP */
                     }
                 }
 
@@ -8221,7 +8159,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
                         Store (DerefOf (Index (CNTB, Zero)), Local0)
                         Store (Local0, Index (UPCP, Zero))
-                        Return (UPCP) /* \_SB_.PCI0.XHC_.RHUB.SSP1._UPC.UPCP */
+                        Return (UPCP) /* \_SB_.PCI0.XHC1.RHUB.SSP1._UPC.UPCP */
                     }
 
                     Method (_PLD, 0, Serialized)  // _PLD: Physical Location of Device
@@ -8243,10 +8181,10 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                         CreateBitField (DerefOf (Index (PLDP, Zero)), 0x40, VIS)
                         If (LNot (And (PR3, One)))
                         {
-                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC_.RHUB.SSP1._PLD.VIS_ */
+                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC1.RHUB.SSP1._PLD.VIS_ */
                         }
 
-                        Return (PLDP) /* \_SB_.PCI0.XHC_.RHUB.SSP1._PLD.PLDP */
+                        Return (PLDP) /* \_SB_.PCI0.XHC1.RHUB.SSP1._PLD.PLDP */
                     }
                 }
 
@@ -8281,7 +8219,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
                         Store (DerefOf (Index (CNTB, One)), Local0)
                         Store (Local0, Index (UPCP, Zero))
-                        Return (UPCP) /* \_SB_.PCI0.XHC_.RHUB.SSP2._UPC.UPCP */
+                        Return (UPCP) /* \_SB_.PCI0.XHC1.RHUB.SSP2._UPC.UPCP */
                     }
 
                     Method (_PLD, 0, Serialized)  // _PLD: Physical Location of Device
@@ -8303,10 +8241,10 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                         CreateBitField (DerefOf (Index (PLDP, Zero)), 0x40, VIS)
                         If (LNot (And (PR3, 0x02)))
                         {
-                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC_.RHUB.SSP2._PLD.VIS_ */
+                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC1.RHUB.SSP2._PLD.VIS_ */
                         }
 
-                        Return (PLDP) /* \_SB_.PCI0.XHC_.RHUB.SSP2._PLD.PLDP */
+                        Return (PLDP) /* \_SB_.PCI0.XHC1.RHUB.SSP2._PLD.PLDP */
                     }
                 }
 
@@ -8341,7 +8279,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
                         Store (DerefOf (Index (CNTB, 0x02)), Local0)
                         Store (Local0, Index (UPCP, Zero))
-                        Return (UPCP) /* \_SB_.PCI0.XHC_.RHUB.SSP3._UPC.UPCP */
+                        Return (UPCP) /* \_SB_.PCI0.XHC1.RHUB.SSP3._UPC.UPCP */
                     }
 
                     Method (_PLD, 0, Serialized)  // _PLD: Physical Location of Device
@@ -8363,10 +8301,10 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                         CreateBitField (DerefOf (Index (PLDP, Zero)), 0x40, VIS)
                         If (LNot (And (PR3, 0x04)))
                         {
-                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC_.RHUB.SSP3._PLD.VIS_ */
+                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC1.RHUB.SSP3._PLD.VIS_ */
                         }
 
-                        Return (PLDP) /* \_SB_.PCI0.XHC_.RHUB.SSP3._PLD.PLDP */
+                        Return (PLDP) /* \_SB_.PCI0.XHC1.RHUB.SSP3._PLD.PLDP */
                     }
                 }
 
@@ -8401,7 +8339,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
                         Store (DerefOf (Index (CNTB, 0x03)), Local0)
                         Store (Local0, Index (UPCP, Zero))
-                        Return (UPCP) /* \_SB_.PCI0.XHC_.RHUB.SSP4._UPC.UPCP */
+                        Return (UPCP) /* \_SB_.PCI0.XHC1.RHUB.SSP4._UPC.UPCP */
                     }
 
                     Method (_PLD, 0, Serialized)  // _PLD: Physical Location of Device
@@ -8423,10 +8361,10 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                         CreateBitField (DerefOf (Index (PLDP, Zero)), 0x40, VIS)
                         If (LNot (And (PR3, 0x08)))
                         {
-                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC_.RHUB.SSP4._PLD.VIS_ */
+                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC1.RHUB.SSP4._PLD.VIS_ */
                         }
 
-                        Return (PLDP) /* \_SB_.PCI0.XHC_.RHUB.SSP4._PLD.PLDP */
+                        Return (PLDP) /* \_SB_.PCI0.XHC1.RHUB.SSP4._PLD.PLDP */
                     }
                 }
 
@@ -8461,7 +8399,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
                         Store (DerefOf (Index (CNTB, 0x04)), Local0)
                         Store (Local0, Index (UPCP, Zero))
-                        Return (UPCP) /* \_SB_.PCI0.XHC_.RHUB.SSP5._UPC.UPCP */
+                        Return (UPCP) /* \_SB_.PCI0.XHC1.RHUB.SSP5._UPC.UPCP */
                     }
 
                     Method (_PLD, 0, Serialized)  // _PLD: Physical Location of Device
@@ -8483,10 +8421,10 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                         CreateBitField (DerefOf (Index (PLDP, Zero)), 0x40, VIS)
                         If (LNot (And (PR3, 0x10)))
                         {
-                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC_.RHUB.SSP5._PLD.VIS_ */
+                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC1.RHUB.SSP5._PLD.VIS_ */
                         }
 
-                        Return (PLDP) /* \_SB_.PCI0.XHC_.RHUB.SSP5._PLD.PLDP */
+                        Return (PLDP) /* \_SB_.PCI0.XHC1.RHUB.SSP5._PLD.PLDP */
                     }
                 }
 
@@ -8521,7 +8459,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
                         Store (DerefOf (Index (CNTB, 0x05)), Local0)
                         Store (Local0, Index (UPCP, Zero))
-                        Return (UPCP) /* \_SB_.PCI0.XHC_.RHUB.SSP6._UPC.UPCP */
+                        Return (UPCP) /* \_SB_.PCI0.XHC1.RHUB.SSP6._UPC.UPCP */
                     }
 
                     Method (_PLD, 0, Serialized)  // _PLD: Physical Location of Device
@@ -8543,52 +8481,30 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                         CreateBitField (DerefOf (Index (PLDP, Zero)), 0x40, VIS)
                         If (LNot (And (PR3, 0x20)))
                         {
-                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC_.RHUB.SSP6._PLD.VIS_ */
+                            And (VIS, Zero, VIS) /* \_SB_.PCI0.XHC1.RHUB.SSP6._PLD.VIS_ */
                         }
 
-                        Return (PLDP) /* \_SB_.PCI0.XHC_.RHUB.SSP6._PLD.PLDP */
+                        Return (PLDP) /* \_SB_.PCI0.XHC1.RHUB.SSP6._PLD.PLDP */
                     }
                 }
             }
 
-            Method (_PRW, 0, NotSerialized)  // _PRW: Power Resources for Wake
+            
+
+            
+            Name(_PRW, Package() { 0x0D, 0 })
+            Method (_DSM, 4, NotSerialized)
             {
-                Return (GPRW (0x0D, 0x03))
-            }
-
-            Method (_DSM, 4, NotSerialized)  // _DSM: Device-Specific Method
-            {
-                If (LEqual (Arg2, Zero))
+                If (LEqual (Arg2, Zero)) { Return (Buffer() { 0x03 } ) }
+                Return (Package()
                 {
-                    Return (Buffer (One)
-                    {
-                         0x03                                           
-                    })
-                }
-
-                Return (Package (0x0E)
-                {
-                    "AAPL,current-available", 
-                    0x9C4, 
-                    "AAPL,current-extra", 
-                    0x18E70, 
-                    "AAPL,current-extra-in-sleep", 
-                    0x18E70, 
-                    "AAPL,max-port-current-in-sleep", 
-                    0x9C4, 
-                    "AAPL,standard-port-current-in-sleep", 
-                    0x384, 
-                    "device-id", 
-                    Buffer (0x04)
-                    {
-                         0x31, 0x8C, 0x00, 0x00                         
-                    }, 
-
-                    "AAPL,clock-id", 
-                    Buffer (One)
-                    {
-                         0x00                                           
-                    }
+                    "subsystem-id", Buffer() { 0x70, 0x72, 0x00, 0x00 },
+                    "subsystem-vendor-id", Buffer() { 0x86, 0x80, 0x00, 0x00 },
+                    "AAPL,current-available", 2100,
+                    "AAPL,current-extra", 2200,
+                    "AAPL,current-extra-in-sleep", 1600,
+                    "AAPL,device-internal", 0x02,
+                    "AAPL,max-port-current-in-sleep", 2100,
                 })
             }
         }
@@ -8611,10 +8527,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                 PMES,   1
             }
 
-            Method (_PRW, 0, NotSerialized)  // _PRW: Power Resources for Wake
-            {
-                Return (GPRW (0x0D, 0x04))
-            }
+            
 
             Method (_DSM, 4, NotSerialized)  // _DSM: Device-Specific Method
             {
@@ -8650,6 +8563,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                 DTGP (Arg0, Arg1, Arg2, Arg3, RefOf (Local0))
                 Return (Local0)
             }
+            Name(_PRW, Package() { 0x0D, 0 })
         }
 
         Scope (RP01)
@@ -9786,7 +9700,7 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
         If (LOr (LEqual (Arg0, 0x03), LEqual (Arg0, 0x04)))
         {
-            \_SB.PCI0.XHC.XWAK ()
+            \_SB.PCI0.XHC1.XWAK ()
         }
 
         Return (Package (0x02)
@@ -10001,9 +9915,9 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
 
         If (LEqual (OSYS, 0x07DC))
         {
-            If (CondRefOf (\_SB.PCI0.XHC.DUAM))
+            If (CondRefOf (\_SB.PCI0.XHC1.DUAM))
             {
-                \_SB.PCI0.XHC.DUAM ()
+                \_SB.PCI0.XHC1.DUAM ()
             }
         }
     }
@@ -10982,9 +10896,9 @@ DefinitionBlock ("DSDT.aml", "DSDT", 2, "_ASUS_", "Notebook", 0x00000012)
                 Notify (\_SB.PCI0.EHC2, 0x02) // Device Wake
             }
 
-            If (LAnd (\_SB.PCI0.XHC.PMEE, \_SB.PCI0.XHC.PMES))
+            If (LAnd (\_SB.PCI0.XHC1.PMEE, \_SB.PCI0.XHC1.PMES))
             {
-                Notify (\_SB.PCI0.XHC, 0x02) // Device Wake
+                Notify (\_SB.PCI0.XHC1, 0x02) // Device Wake
             }
 
             If (LAnd (\_SB.PCI0.HDEF.PMEE, \_SB.PCI0.HDEF.PMES))
@@ -21780,7 +21694,7 @@ BB1C,8,BB1D,8,BB1E,8,BB1F,8
     {
     }
 
-    Scope (_SB.PCI0.XHC.RHUB.HS07)
+    Scope (_SB.PCI0.XHC1.RHUB.HS07)
     {
         Name (CAPD, Package (0x01)
         {
@@ -21796,7 +21710,7 @@ BB1C,8,BB1D,8,BB1E,8,BB1F,8
             Name (_ADR, 0x07)  // _ADR: Address
             Method (_PLD, 0, NotSerialized)  // _PLD: Physical Location of Device
             {
-                Return (CAPD) /* \_SB_.PCI0.XHC_.RHUB.HS07.CAPD */
+                Return (CAPD) /* \_SB_.PCI0.XHC1.RHUB.HS07.CAPD */
             }
         }
     }
